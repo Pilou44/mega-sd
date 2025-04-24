@@ -4,7 +4,7 @@
   "name": "Mega SD",
   "content": "",
   "created_at": "2025-04-24 10:34:29",
-  "updated_at": "2025-04-24 14:02:23",
+  "updated_at": "2025-04-24 15:47:57",
   "stick": "",
   "documents": [
     {
@@ -15,7 +15,9 @@
       "master": "",
       "thumb": "/images/thumb-default.png",
       "components": {
-        "d9d8f39c5d6f44dc9e04d44e2b185629": 1
+        "934b9cc049a84128b37b9571b08c4efb": 5,
+        "ac020b04cdc64fe3a9f2112a0a0585ac": 1,
+        "ff6c91a15fb44bbc97accf7419a48028": 5
       },
       "BOM": [
         [
@@ -26,7 +28,31 @@
           "CustomPara"
         ],
         [
-          "MEGADRIVE EXPANSION PORT",
+          "SN74LVC245ANG4",
+          5,
+          "PDIP-20_L25.9-W6.6-P2.54-LS7.9-BL",
+          "ADDRESS1,ADDRESS2,ADDRESS3,DATA1,DATA2",
+          {
+            "Manufacturer Part": "SN74LVC245ANG4",
+            "Manufacturer": "TI(德州仪器)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C1548982"
+          }
+        ],
+        [
+          "100nF",
+          5,
+          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
+          "C1,C2,C3,C4,C5",
+          {
+            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
+            "Manufacturer": "Dersonic(德尔创)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C254085"
+          }
+        ],
+        [
+          "SEGA_MEGADRIVE_EXPANSION PORT",
           1,
           "PCB_EDGE_CONNECTOR_30X2 P2.54MM",
           "J1",
@@ -38,11 +64,11 @@
           }
         ]
       ],
-      "updateTime": 1745495672,
+      "updateTime": 1745502477,
       "createTime": 1745483669,
       "histories": [],
       "created_at": "2025-04-24 10:34:29",
-      "updated_at": "2025-04-24 13:54:32"
+      "updated_at": "2025-04-24 15:47:57"
     },
     {
       "uuid": "9decebf69845fca2fad2db591224597e",
@@ -88,5 +114,5 @@
   "title": "Mega SD",
   "foldername": "Mega SD",
   "schfilename": "Mega SD.json",
-  "schfilemtime": 1745495672599
+  "schfilemtime": 1745502477438
 }
