@@ -1,0 +1,92 @@
+{
+  "uuid": "efa73c0edcd93f9dbf665ce038087708",
+  "path": "Offline/Mega%20SD",
+  "name": "Mega SD",
+  "content": "",
+  "created_at": "2025-04-24 10:34:29",
+  "updated_at": "2025-04-24 11:52:54",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "cddd8c78e215edc51bc33f6b52fe1e71",
+      "title": "Sheet_1",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "d9d8f39c5d6f44dc9e04d44e2b185629": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "EDGE CONNECTOR 30X2 P2.54MM",
+          1,
+          "PCB_EDGE_CONNECTOR_30X2 P2.54MM",
+          "J1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ]
+      ],
+      "updateTime": 1745488374,
+      "createTime": 1745483669,
+      "histories": [],
+      "created_at": "2025-04-24 10:34:29",
+      "updated_at": "2025-04-24 11:52:54"
+    },
+    {
+      "uuid": "9decebf69845fca2fad2db591224597e",
+      "puuid": "efa73c0edcd93f9dbf665ce038087708",
+      "title": "PCB_Mega SD",
+      "filename": "PCB_Mega SD.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "e97c221a3fc245738ad325f02b360c4d": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "EDGE CONNECTOR 30X2 P2.54MM",
+          1,
+          "PCB_EDGE_CONNECTOR_30X2 P2.54MM",
+          "J1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ]
+      ],
+      "updateTime": 1745486490,
+      "createTime": 1745486490,
+      "histories": [],
+      "created_at": "2025-04-24 11:21:30",
+      "updated_at": "2025-04-24 11:21:30"
+    }
+  ],
+  "sort": [],
+  "title": "Mega SD",
+  "foldername": "Mega SD",
+  "schfilename": "Mega SD.json",
+  "schfilemtime": 1745488374498
+}
