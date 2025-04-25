@@ -4,7 +4,7 @@
   "name": "Mega SD",
   "content": "",
   "created_at": "2025-04-24 10:34:29",
-  "updated_at": "2025-04-25 15:56:34",
+  "updated_at": "2025-04-25 19:08:12",
   "stick": "",
   "documents": [
     {
@@ -18,7 +18,12 @@
         "934b9cc049a84128b37b9571b08c4efb": 5,
         "ac020b04cdc64fe3a9f2112a0a0585ac": 1,
         "ff6c91a15fb44bbc97accf7419a48028": 5,
-        "73101b89bb3641beb1045d2b21ede147": 1
+        "73101b89bb3641beb1045d2b21ede147": 1,
+        "7cf48778562b448cb1596ee904fd2522": 1,
+        "c8920d8ff2a8477796e7660bdbba4bf7": 1,
+        "2761b94687ab41ae86f3c0afca94138d": 1,
+        "3d934d82904b4c46a63ba0283a7ea11a": 1,
+        "a17c8a84b9fe479b8a170d8144a7ef92": 1
       },
       "BOM": [
         [
@@ -53,6 +58,18 @@
           }
         ],
         [
+          "1N5819-TP",
+          1,
+          "DO-41_BD2.4-L4.7-P8.70-D0.9-FD",
+          "D1",
+          {
+            "Manufacturer Part": "1N5819-TP",
+            "Manufacturer": "null",
+            "Supplier": "LCSC",
+            "Supplier Part": "C725292"
+          }
+        ],
+        [
           "SEGA_MEGADRIVE_EXPANSION PORT",
           1,
           "PCB_EDGE_CONNECTOR_30X2 P2.54MM",
@@ -62,6 +79,42 @@
             "Manufacturer": "",
             "Supplier": "",
             "Supplier Part": ""
+          }
+        ],
+        [
+          "2.45MM_1*2_PIN COPY",
+          1,
+          "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X11_P_2.54MM",
+          "P1",
+          {
+            "Manufacturer Part": "Female headerHDR1X8-2.54",
+            "Manufacturer": "BOOMELE",
+            "Supplier": "LCSC",
+            "Supplier Part": "C27438"
+          }
+        ],
+        [
+          "IRF9540NPBF-JSM",
+          1,
+          "TO-220-3_L10.2-W4.6-P2.54-L",
+          "Q1",
+          {
+            "Manufacturer Part": "IRF9540NPBF-JSM",
+            "Manufacturer": "JSMSEMI(杰盛微)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C18187958"
+          }
+        ],
+        [
+          "10kΩ",
+          1,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R1",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
           }
         ],
         [
@@ -75,13 +128,25 @@
             "Supplier": "",
             "Supplier Part": ""
           }
+        ],
+        [
+          "LF33CV",
+          1,
+          "TO-220-3_L10.2-W4.5-P2.54-L",
+          "U2",
+          {
+            "Manufacturer Part": "LF33CV",
+            "Manufacturer": "ST(意法半导体)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C2832779"
+          }
         ]
       ],
-      "updateTime": 1745589394,
+      "updateTime": 1745600892,
       "createTime": 1745483669,
       "histories": [],
       "created_at": "2025-04-24 10:34:29",
-      "updated_at": "2025-04-25 15:56:34"
+      "updated_at": "2025-04-25 19:08:12"
     },
     {
       "uuid": "9decebf69845fca2fad2db591224597e",
@@ -127,5 +192,5 @@
   "title": "Mega SD",
   "foldername": "Mega SD",
   "schfilename": "Mega SD.json",
-  "schfilemtime": 1745589394351
+  "schfilemtime": 1745600892926
 }
