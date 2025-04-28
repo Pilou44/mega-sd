@@ -4,12 +4,12 @@
   "name": "Mega SD",
   "content": "",
   "created_at": "2025-04-24 10:34:29",
-  "updated_at": "2025-04-28 15:19:49",
+  "updated_at": "2025-04-28 18:35:42",
   "stick": "",
   "documents": [
     {
       "uuid": "cddd8c78e215edc51bc33f6b52fe1e71",
-      "title": "Sheet_1",
+      "title": "Main",
       "description": "",
       "docType": "1",
       "master": "",
@@ -18,7 +18,8 @@
         "934b9cc049a84128b37b9571b08c4efb": 5,
         "ff6c91a15fb44bbc97accf7419a48028": 5,
         "73101b89bb3641beb1045d2b21ede147": 1,
-        "ac020b04cdc64fe3a9f2112a0a0585ac": 1
+        "ac020b04cdc64fe3a9f2112a0a0585ac": 1,
+        "e345fb703c7fe95ae55b93c7b7c9408d": 1
       },
       "BOM": [
         [
@@ -44,19 +45,7 @@
           "100nF",
           7,
           "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C1,C2,C3,C4,C5,C12,C13",
-          {
-            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
-            "Manufacturer": "Dersonic(德尔创)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C254085"
-          }
-        ],
-        [
-          "47uF",
-          1,
-          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C10",
+          "C1,C2,C3,C4,C5,C6,C7",
           {
             "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
             "Manufacturer": "Dersonic(德尔创)",
@@ -68,7 +57,19 @@
           "10uF",
           1,
           "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C11",
+          "C8",
+          {
+            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
+            "Manufacturer": "Dersonic(德尔创)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C254085"
+          }
+        ],
+        [
+          "47uF",
+          1,
+          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
+          "C9",
           {
             "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
             "Manufacturer": "Dersonic(德尔创)",
@@ -80,7 +81,7 @@
           "1N5819-TP",
           1,
           "DO-41_BD2.4-L4.7-P8.70-D0.9-FD",
-          "D2",
+          "D1",
           {
             "Manufacturer Part": "1N5819-TP",
             "Manufacturer": "null",
@@ -104,7 +105,7 @@
           "2.45MM_1*2_PIN",
           1,
           "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X11_P_2.54MM",
-          "P2",
+          "P1",
           {
             "Manufacturer Part": "Female headerHDR1X8-2.54",
             "Manufacturer": "BOOMELE",
@@ -116,7 +117,7 @@
           "IRF9540NPBF-JSM",
           1,
           "TO-220-3_L10.2-W4.6-P2.54-L",
-          "Q2",
+          "Q1",
           {
             "Manufacturer Part": "IRF9540NPBF-JSM",
             "Manufacturer": "JSMSEMI(杰盛微)",
@@ -125,10 +126,22 @@
           }
         ],
         [
-          "10kΩ",
+          "2N3904L-T92-B",
           1,
+          "TO-92-3_L4.8-W3.7-P2.54-L",
+          "Q2",
+          {
+            "Manufacturer Part": "2N3904L-T92-B",
+            "Manufacturer": "UTC(友顺)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C94133"
+          }
+        ],
+        [
+          "10kΩ",
+          2,
           "RES-TH_BD2.3-L6.5-P10.50-D0.5",
-          "R2",
+          "R1,R2",
           {
             "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
             "Manufacturer": "CCO(千志电子)",
@@ -152,20 +165,32 @@
           "LF33CV",
           1,
           "TO-220-3_L10.2-W4.5-P2.54-L",
-          "U3",
+          "U2",
           {
             "Manufacturer Part": "LF33CV",
             "Manufacturer": "ST(意法半导体)",
             "Supplier": "LCSC",
             "Supplier Part": "C2832779"
           }
+        ],
+        [
+          "SN74HC00N",
+          1,
+          "DIP-14_L20.0-W7.6-P2.54-LS7.6-BL",
+          "U3",
+          {
+            "Manufacturer Part": "SN74HC00N",
+            "Manufacturer": "TI(德州仪器)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C2902"
+          }
         ]
       ],
-      "updateTime": 1745845606,
+      "updateTime": 1745858142,
       "createTime": 1745483669,
       "histories": [],
       "created_at": "2025-04-24 10:34:29",
-      "updated_at": "2025-04-28 15:06:46"
+      "updated_at": "2025-04-28 18:35:42"
     },
     {
       "uuid": "6213e7c69d8f70ef292da2d36742f456",
@@ -334,13 +359,25 @@
             "Supplier": "LCSC",
             "Supplier Part": "C2832779"
           }
+        ],
+        [
+          "74HC08N",
+          1,
+          "PDIP-14_L19.3-W6.5-P2.54-LS7.6-BL",
+          "U3",
+          {
+            "Manufacturer Part": "74HC08N",
+            "Manufacturer": "HGSEMI(华冠)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C5116331"
+          }
         ]
       ],
-      "updateTime": 1745846389,
+      "updateTime": 1745847434,
       "createTime": 1745843646,
       "histories": [],
       "created_at": "2025-04-28 14:34:06",
-      "updated_at": "2025-04-28 15:19:49"
+      "updated_at": "2025-04-28 15:37:14"
     },
     {
       "uuid": "9decebf69845fca2fad2db591224597e",
@@ -397,5 +434,5 @@
   "title": "Mega SD",
   "foldername": "Mega SD",
   "schfilename": "Mega SD.json",
-  "schfilemtime": 1745846389928
+  "schfilemtime": 1745858142519
 }
