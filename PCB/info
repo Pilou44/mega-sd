@@ -4,7 +4,7 @@
   "name": "Mega SD",
   "content": "",
   "created_at": "2025-04-24 10:34:29",
-  "updated_at": "2025-04-28 12:18:00",
+  "updated_at": "2025-04-28 12:32:20",
   "stick": "",
   "documents": [
     {
@@ -17,7 +17,7 @@
       "components": {
         "934b9cc049a84128b37b9571b08c4efb": 5,
         "ac020b04cdc64fe3a9f2112a0a0585ac": 1,
-        "ff6c91a15fb44bbc97accf7419a48028": 7,
+        "ff6c91a15fb44bbc97accf7419a48028": 9,
         "73101b89bb3641beb1045d2b21ede147": 1,
         "7cf48778562b448cb1596ee904fd2522": 1,
         "c8920d8ff2a8477796e7660bdbba4bf7": 1,
@@ -47,9 +47,9 @@
         ],
         [
           "100nF",
-          6,
+          7,
           "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C1,C2,C3,C4,C5,C6",
+          "C1,C2,C3,C4,C5,C6,C7",
           {
             "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
             "Manufacturer": "Dersonic(德尔创)",
@@ -61,7 +61,19 @@
           "10uF",
           1,
           "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C7",
+          "C8",
+          {
+            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
+            "Manufacturer": "Dersonic(德尔创)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C254085"
+          }
+        ],
+        [
+          "47uF",
+          1,
+          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
+          "C9",
           {
             "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
             "Manufacturer": "Dersonic(德尔创)",
@@ -154,11 +166,11 @@
           }
         ]
       ],
-      "updateTime": 1745835480,
+      "updateTime": 1745836340,
       "createTime": 1745483669,
       "histories": [],
       "created_at": "2025-04-24 10:34:29",
-      "updated_at": "2025-04-28 12:18:00"
+      "updated_at": "2025-04-28 12:32:20"
     },
     {
       "uuid": "9decebf69845fca2fad2db591224597e",
@@ -204,5 +216,5 @@
   "title": "Mega SD",
   "foldername": "Mega SD",
   "schfilename": "Mega SD.json",
-  "schfilemtime": 1745835480895
+  "schfilemtime": 1745836340141
 }
