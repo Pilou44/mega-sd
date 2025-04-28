@@ -4,7 +4,7 @@
   "name": "Mega SD",
   "content": "",
   "created_at": "2025-04-24 10:34:29",
-  "updated_at": "2025-04-28 15:06:47",
+  "updated_at": "2025-04-28 15:19:49",
   "stick": "",
   "documents": [
     {
@@ -176,11 +176,12 @@
       "thumb": "/images/thumb-default.png",
       "components": {
         "ff6c91a15fb44bbc97accf7419a48028": 4,
-        "2761b94687ab41ae86f3c0afca94138d": 1,
         "c8920d8ff2a8477796e7660bdbba4bf7": 1,
         "7cf48778562b448cb1596ee904fd2522": 1,
-        "3d934d82904b4c46a63ba0283a7ea11a": 1,
-        "a17c8a84b9fe479b8a170d8144a7ef92": 1
+        "a17c8a84b9fe479b8a170d8144a7ef92": 1,
+        "758efc4a7a254d5aa5a7bc1b85b4cbb5": 1,
+        "3d934d82904b4c46a63ba0283a7ea11a": 2,
+        "2761b94687ab41ae86f3c0afca94138d": 1
       },
       "BOM": [
         [
@@ -206,19 +207,7 @@
           "100nF",
           7,
           "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C1,C2,C3,C4,C5,C12,C13",
-          {
-            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
-            "Manufacturer": "Dersonic(德尔创)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C254085"
-          }
-        ],
-        [
-          "47uF",
-          1,
-          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C10",
+          "C1,C2,C3,C4,C5,C6,C7",
           {
             "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
             "Manufacturer": "Dersonic(德尔创)",
@@ -230,7 +219,19 @@
           "10uF",
           1,
           "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C11",
+          "C8",
+          {
+            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
+            "Manufacturer": "Dersonic(德尔创)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C254085"
+          }
+        ],
+        [
+          "47uF",
+          1,
+          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
+          "C9",
           {
             "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
             "Manufacturer": "Dersonic(德尔创)",
@@ -242,7 +243,7 @@
           "1N5819-TP",
           1,
           "DO-41_BD2.4-L4.7-P8.70-D0.9-FD",
-          "D2",
+          "D1",
           {
             "Manufacturer Part": "1N5819-TP",
             "Manufacturer": "null",
@@ -266,7 +267,7 @@
           "2.45MM_1*2_PIN",
           1,
           "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X11_P_2.54MM",
-          "P2",
+          "P1",
           {
             "Manufacturer Part": "Female headerHDR1X8-2.54",
             "Manufacturer": "BOOMELE",
@@ -278,7 +279,7 @@
           "IRF9540NPBF-JSM",
           1,
           "TO-220-3_L10.2-W4.6-P2.54-L",
-          "Q2",
+          "Q1",
           {
             "Manufacturer Part": "IRF9540NPBF-JSM",
             "Manufacturer": "JSMSEMI(杰盛微)",
@@ -287,10 +288,22 @@
           }
         ],
         [
-          "10kΩ",
+          "2N3904L-T92-B",
           1,
+          "TO-92-3_L4.8-W3.7-P2.54-L",
+          "Q2",
+          {
+            "Manufacturer Part": "2N3904L-T92-B",
+            "Manufacturer": "UTC(友顺)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C94133"
+          }
+        ],
+        [
+          "10kΩ",
+          2,
           "RES-TH_BD2.3-L6.5-P10.50-D0.5",
-          "R2",
+          "R1,R2",
           {
             "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
             "Manufacturer": "CCO(千志电子)",
@@ -314,7 +327,7 @@
           "LF33CV",
           1,
           "TO-220-3_L10.2-W4.5-P2.54-L",
-          "U3",
+          "U2",
           {
             "Manufacturer Part": "LF33CV",
             "Manufacturer": "ST(意法半导体)",
@@ -323,11 +336,11 @@
           }
         ]
       ],
-      "updateTime": 1745843994,
+      "updateTime": 1745846389,
       "createTime": 1745843646,
       "histories": [],
       "created_at": "2025-04-28 14:34:06",
-      "updated_at": "2025-04-28 14:39:54"
+      "updated_at": "2025-04-28 15:19:49"
     },
     {
       "uuid": "9decebf69845fca2fad2db591224597e",
@@ -384,5 +397,5 @@
   "title": "Mega SD",
   "foldername": "Mega SD",
   "schfilename": "Mega SD.json",
-  "schfilemtime": 1745845606455
+  "schfilemtime": 1745846389928
 }
