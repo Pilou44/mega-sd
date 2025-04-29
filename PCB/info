@@ -4,7 +4,7 @@
   "name": "Mega SD",
   "content": "",
   "created_at": "2025-04-24 10:34:29",
-  "updated_at": "2025-04-29 11:08:19",
+  "updated_at": "2025-04-29 14:08:20",
   "stick": "",
   "documents": [
     {
@@ -19,7 +19,8 @@
         "ff6c91a15fb44bbc97accf7419a48028": 6,
         "73101b89bb3641beb1045d2b21ede147": 1,
         "ac020b04cdc64fe3a9f2112a0a0585ac": 1,
-        "e345fb703c7fe95ae55b93c7b7c9408d": 1
+        "e345fb703c7fe95ae55b93c7b7c9408d": 1,
+        "ac7e82ae18de4a558d82eccb57fc3679": 1
       },
       "BOM": [
         [
@@ -75,6 +76,18 @@
             "Manufacturer": "Dersonic(德尔创)",
             "Supplier": "LCSC",
             "Supplier Part": "C254085"
+          }
+        ],
+        [
+          "SDCARD_READER",
+          1,
+          "PINHEADER1X6_2X54",
+          "CONN1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
           }
         ],
         [
@@ -186,11 +199,11 @@
           }
         ]
       ],
-      "updateTime": 1745917699,
+      "updateTime": 1745928500,
       "createTime": 1745483669,
       "histories": [],
       "created_at": "2025-04-24 10:34:29",
-      "updated_at": "2025-04-29 11:08:19"
+      "updated_at": "2025-04-29 14:08:20"
     },
     {
       "uuid": "6213e7c69d8f70ef292da2d36742f456",
@@ -230,9 +243,9 @@
         ],
         [
           "100nF",
-          7,
+          8,
           "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C1,C2,C3,C4,C5,C6,C7",
+          "C1,C2,C3,C4,C5,C6,C7,C10",
           {
             "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
             "Manufacturer": "Dersonic(德尔创)",
@@ -262,6 +275,18 @@
             "Manufacturer": "Dersonic(德尔创)",
             "Supplier": "LCSC",
             "Supplier Part": "C254085"
+          }
+        ],
+        [
+          "SDCARD_READER",
+          1,
+          "PINHEADER1X6_2X54",
+          "CONN1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
           }
         ],
         [
@@ -361,23 +386,23 @@
           }
         ],
         [
-          "74HC08N",
+          "SN74HC00N",
           1,
-          "PDIP-14_L19.3-W6.5-P2.54-LS7.6-BL",
+          "DIP-14_L20.0-W7.6-P2.54-LS7.6-BL",
           "U3",
           {
-            "Manufacturer Part": "74HC08N",
-            "Manufacturer": "HGSEMI(华冠)",
+            "Manufacturer Part": "SN74HC00N",
+            "Manufacturer": "TI(德州仪器)",
             "Supplier": "LCSC",
-            "Supplier Part": "C5116331"
+            "Supplier Part": "C2902"
           }
         ]
       ],
-      "updateTime": 1745847434,
+      "updateTime": 1745928398,
       "createTime": 1745843646,
       "histories": [],
       "created_at": "2025-04-28 14:34:06",
-      "updated_at": "2025-04-28 15:37:14"
+      "updated_at": "2025-04-29 14:06:38"
     },
     {
       "uuid": "9decebf69845fca2fad2db591224597e",
@@ -434,5 +459,5 @@
   "title": "Mega SD",
   "foldername": "Mega SD",
   "schfilename": "Mega SD.json",
-  "schfilemtime": 1745917699479
+  "schfilemtime": 1745928501025
 }
