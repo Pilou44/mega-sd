@@ -4,7 +4,7 @@
   "name": "Mega SD",
   "content": "",
   "created_at": "2025-04-24 10:34:29",
-  "updated_at": "2025-04-28 18:35:42",
+  "updated_at": "2025-04-29 11:08:19",
   "stick": "",
   "documents": [
     {
@@ -16,7 +16,7 @@
       "thumb": "/images/thumb-default.png",
       "components": {
         "934b9cc049a84128b37b9571b08c4efb": 5,
-        "ff6c91a15fb44bbc97accf7419a48028": 5,
+        "ff6c91a15fb44bbc97accf7419a48028": 6,
         "73101b89bb3641beb1045d2b21ede147": 1,
         "ac020b04cdc64fe3a9f2112a0a0585ac": 1,
         "e345fb703c7fe95ae55b93c7b7c9408d": 1
@@ -43,9 +43,9 @@
         ],
         [
           "100nF",
-          7,
+          8,
           "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C1,C2,C3,C4,C5,C6,C7",
+          "C1,C2,C3,C4,C5,C6,C7,C10",
           {
             "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
             "Manufacturer": "Dersonic(德尔创)",
@@ -186,11 +186,11 @@
           }
         ]
       ],
-      "updateTime": 1745858142,
+      "updateTime": 1745917699,
       "createTime": 1745483669,
       "histories": [],
       "created_at": "2025-04-24 10:34:29",
-      "updated_at": "2025-04-28 18:35:42"
+      "updated_at": "2025-04-29 11:08:19"
     },
     {
       "uuid": "6213e7c69d8f70ef292da2d36742f456",
@@ -434,5 +434,5 @@
   "title": "Mega SD",
   "foldername": "Mega SD",
   "schfilename": "Mega SD.json",
-  "schfilemtime": 1745858142519
+  "schfilemtime": 1745917699479
 }
