@@ -4,7 +4,7 @@
   "name": "Mega SD",
   "content": "",
   "created_at": "2025-04-24 10:34:29",
-  "updated_at": "2025-04-29 14:32:17",
+  "updated_at": "2025-04-29 15:03:13",
   "stick": "",
   "documents": [
     {
@@ -20,7 +20,8 @@
         "73101b89bb3641beb1045d2b21ede147": 1,
         "ac020b04cdc64fe3a9f2112a0a0585ac": 1,
         "e345fb703c7fe95ae55b93c7b7c9408d": 1,
-        "ac7e82ae18de4a558d82eccb57fc3679": 1
+        "ac7e82ae18de4a558d82eccb57fc3679": 1,
+        "2d2f3fe1ae1f44b29381afa8a5d55da6": 1
       },
       "BOM": [
         [
@@ -197,13 +198,25 @@
             "Supplier": "LCSC",
             "Supplier Part": "C2902"
           }
+        ],
+        [
+          "LED PANEL",
+          1,
+          "PINHEADER1X4N",
+          "U4",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": "undefined"
+          }
         ]
       ],
-      "updateTime": 1745929937,
+      "updateTime": 1745931793,
       "createTime": 1745483669,
       "histories": [],
       "created_at": "2025-04-24 10:34:29",
-      "updated_at": "2025-04-29 14:32:17"
+      "updated_at": "2025-04-29 15:03:13"
     },
     {
       "uuid": "6213e7c69d8f70ef292da2d36742f456",
@@ -459,5 +472,5 @@
   "title": "Mega SD",
   "foldername": "Mega SD",
   "schfilename": "Mega SD.json",
-  "schfilemtime": 1745929937266
+  "schfilemtime": 1745931793318
 }
