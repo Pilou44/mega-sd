@@ -4,7 +4,7 @@
   "name": "Mega SD",
   "content": "",
   "created_at": "2025-04-24 10:34:29",
-  "updated_at": "2025-05-06 17:46:32",
+  "updated_at": "2025-05-06 17:59:54",
   "stick": "",
   "documents": [
     {
@@ -25,7 +25,8 @@
         "3d934d82904b4c46a63ba0283a7ea11a": 3,
         "44dda124c2d24630bf4d220970fa0f7a": 1,
         "e6eabbf39254400eb686288e8056c09c": 2,
-        "a7bbcaab937f46c493a1c636313057e2": 1
+        "a7bbcaab937f46c493a1c636313057e2": 1,
+        "0e47c493c45f453aa736afadf71c886e": 1
       },
       "BOM": [
         [
@@ -157,9 +158,9 @@
         ],
         [
           "2N3904L-T92-B",
-          1,
+          2,
           "TO-92-3_L4.8-W3.7-P2.54-L",
-          "Q2",
+          "Q2,Q3",
           {
             "Manufacturer Part": "2N3904L-T92-B",
             "Manufacturer": "UTC(友顺)",
@@ -181,9 +182,21 @@
         ],
         [
           "330Ω",
+          4,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R4,R6,R7,R9",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "1kΩ",
           1,
           "RES-TH_BD2.3-L6.5-P10.50-D0.5",
-          "R4",
+          "R8",
           {
             "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
             "Manufacturer": "CCO(千志电子)",
@@ -241,9 +254,9 @@
         ],
         [
           "LED PANEL",
-          1,
+          2,
           "PINHEADER1X4N",
-          "U4",
+          "U4,U7",
           {
             "Manufacturer Part": "",
             "Manufacturer": "",
@@ -274,13 +287,25 @@
             "Supplier": "",
             "Supplier Part": ""
           }
+        ],
+        [
+          "MEGADRIVE AUDIO",
+          1,
+          "PINHEADER1X5N",
+          "U8",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": "undefined"
+          }
         ]
       ],
-      "updateTime": 1746545209,
+      "updateTime": 1746547194,
       "createTime": 1745483669,
       "histories": [],
       "created_at": "2025-04-24 10:34:29",
-      "updated_at": "2025-05-06 17:26:49"
+      "updated_at": "2025-05-06 17:59:54"
     },
     {
       "uuid": "6213e7c69d8f70ef292da2d36742f456",
@@ -848,5 +873,5 @@
   "title": "Mega SD",
   "foldername": "Mega SD",
   "schfilename": "Mega SD.json",
-  "schfilemtime": 1746546392673
+  "schfilemtime": 1746547194638
 }
