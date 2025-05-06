@@ -4,7 +4,7 @@
   "name": "Mega SD",
   "content": "",
   "created_at": "2025-04-24 10:34:29",
-  "updated_at": "2025-04-29 16:16:30",
+  "updated_at": "2025-05-06 11:57:20",
   "stick": "",
   "documents": [
     {
@@ -22,7 +22,10 @@
         "e345fb703c7fe95ae55b93c7b7c9408d": 1,
         "ac7e82ae18de4a558d82eccb57fc3679": 1,
         "2d2f3fe1ae1f44b29381afa8a5d55da6": 1,
-        "65d7214c5ec74df1a111539f45cfdb3e": 1
+        "65d7214c5ec74df1a111539f45cfdb3e": 1,
+        "3d934d82904b4c46a63ba0283a7ea11a": 3,
+        "44dda124c2d24630bf4d220970fa0f7a": 1,
+        "6954b39beac542f6a218886377399868": 1
       },
       "BOM": [
         [
@@ -129,6 +132,18 @@
           }
         ],
         [
+          "LED_5MM",
+          1,
+          "LED-5MM-5MM",
+          "LED1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
           "2.45MM_1*2_PIN",
           1,
           "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X11_P_2.54MM",
@@ -166,14 +181,38 @@
         ],
         [
           "10kΩ",
-          2,
+          4,
           "RES-TH_BD2.3-L6.5-P10.50-D0.5",
-          "R1,R2",
+          "R1,R2,R3,R5",
           {
             "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
             "Manufacturer": "CCO(千志电子)",
             "Supplier": "LCSC",
             "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "330Ω",
+          1,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R4",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "ESP101",
+          1,
+          "ESP1010",
+          "SW1",
+          {
+            "Manufacturer Part": "SSSS811101",
+            "Manufacturer": "ALPS",
+            "Supplier": "LCSC",
+            "Supplier Part": "C109335"
           }
         ],
         [
@@ -225,11 +264,11 @@
           }
         ]
       ],
-      "updateTime": 1745936190,
+      "updateTime": 1746525433,
       "createTime": 1745483669,
       "histories": [],
       "created_at": "2025-04-24 10:34:29",
-      "updated_at": "2025-04-29 16:16:30"
+      "updated_at": "2025-05-06 11:57:13"
     },
     {
       "uuid": "6213e7c69d8f70ef292da2d36742f456",
@@ -465,14 +504,21 @@
       "thumb": "/images/thumb-default.png",
       "components": {
         "dbf8bf2c4285421f9f2eb915163d57a0": 5,
-        "e5f18ad4cbd640f19e982a56bf9df16b": 9,
-        "f9b6c4acbda64b569861a21e133c291c": 1,
+        "e5f18ad4cbd640f19e982a56bf9df16b": 10,
         "e97c221a3fc245738ad325f02b360c4d": 1,
+        "718d68976b0d4a2586056a5f15902cb1": 1,
+        "7b4302f683034d02ac0b2c2c9af9084f": 1,
+        "4213b66f7e4c48e0930beec9d2cabfad": 1,
+        "619489e674074de888fe8dd8f6b9799e": 1,
+        "9ea59130ae074fa3abe27de8cbf71d91": 5,
+        "dea0bb4b355444a8a0eca19a5486a7f8": 1,
+        "82f5897e282c46ed83dd0855ab5a852b": 1,
+        "f9b6c4acbda64b569861a21e133c291c": 1,
         "6c74388789ee4545a72496861325d86c": 1,
         "c6f62fc6b1e448a78a63450b82e4b83d": 1,
-        "9ea59130ae074fa3abe27de8cbf71d91": 1,
-        "718d68976b0d4a2586056a5f15902cb1": 1,
-        "1d17fb957a704dd4b47035b0f10d4493": 1
+        "1d17fb957a704dd4b47035b0f10d4493": 1,
+        "f5a36c547aff4596b977b7cafc978579": 1,
+        "135965312b5144a488509080dab1d2e5": 1
       },
       "BOM": [
         [
@@ -495,11 +541,11 @@
           }
         ]
       ],
-      "updateTime": 1745845607,
+      "updateTime": 1746525440,
       "createTime": 1745486490,
       "histories": [],
       "created_at": "2025-04-24 11:21:30",
-      "updated_at": "2025-04-28 15:06:47"
+      "updated_at": "2025-05-06 11:57:20"
     }
   ],
   "sort": [
@@ -509,5 +555,5 @@
   "title": "Mega SD",
   "foldername": "Mega SD",
   "schfilename": "Mega SD.json",
-  "schfilemtime": 1745936190709
+  "schfilemtime": 1746525433484
 }
