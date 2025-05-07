@@ -4,7 +4,7 @@
   "name": "Led Panel Mega SD",
   "content": "",
   "created_at": "2025-05-07 09:46:30",
-  "updated_at": "2025-05-07 09:47:07",
+  "updated_at": "2025-05-07 10:23:13",
   "stick": "",
   "documents": [
     {
@@ -14,7 +14,12 @@
       "docType": "1",
       "master": "",
       "thumb": "/images/thumb-default.png",
-      "components": {},
+      "components": {
+        "5abd2927c4904d76822e7285cc5f9b43": 3,
+        "3d934d82904b4c46a63ba0283a7ea11a": 4,
+        "758efc4a7a254d5aa5a7bc1b85b4cbb5": 1,
+        "2d2f3fe1ae1f44b29381afa8a5d55da6": 1
+      },
       "BOM": [
         [
           "Value",
@@ -22,13 +27,73 @@
           "Package",
           "Components",
           "CustomPara"
+        ],
+        [
+          "LED 3MM",
+          3,
+          "LED_LED3MM",
+          "LED2,LED3,LED4",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "2N3904L-T92-B",
+          1,
+          "TO-92-3_L4.8-W3.7-P2.54-L",
+          "Q3",
+          {
+            "Manufacturer Part": "2N3904L-T92-B",
+            "Manufacturer": "UTC(友顺)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C94133"
+          }
+        ],
+        [
+          "330Ω",
+          3,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R6,R7,R9",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "1kΩ",
+          1,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R8",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "LED PANEL",
+          1,
+          "PINHEADER1X4N",
+          "U7",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": "undefined"
+          }
         ]
       ],
-      "updateTime": 1746603991,
+      "updateTime": 1746606193,
       "createTime": 1746603991,
       "histories": [],
       "created_at": "2025-05-07 09:46:31",
-      "updated_at": "2025-05-07 09:46:31"
+      "updated_at": "2025-05-07 10:23:13"
     }
   ],
   "sort": [
@@ -39,5 +104,5 @@
   "title": "Led Panel Mega SD",
   "foldername": "Led Panel Mega SD",
   "schfilename": "Led Panel Mega SD.json",
-  "schfilemtime": 1746604027016
+  "schfilemtime": 1746606193676
 }
