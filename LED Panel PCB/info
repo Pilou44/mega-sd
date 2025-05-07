@@ -4,7 +4,7 @@
   "name": "Led Panel Mega SD",
   "content": "",
   "created_at": "2025-05-07 09:46:30",
-  "updated_at": "2025-05-07 10:23:13",
+  "updated_at": "2025-05-07 10:39:28",
   "stick": "",
   "documents": [
     {
@@ -19,6 +19,96 @@
         "3d934d82904b4c46a63ba0283a7ea11a": 4,
         "758efc4a7a254d5aa5a7bc1b85b4cbb5": 1,
         "2d2f3fe1ae1f44b29381afa8a5d55da6": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "LED 3MM",
+          3,
+          "LED_LED3MM",
+          "LED1,LED2,LED3",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "2N3904L-T92-B",
+          1,
+          "TO-92-3_L4.8-W3.7-P2.54-L",
+          "Q1",
+          {
+            "Manufacturer Part": "2N3904L-T92-B",
+            "Manufacturer": "UTC(友顺)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C94133"
+          }
+        ],
+        [
+          "330Ω",
+          3,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R1,R2,R3",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "1kΩ",
+          1,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R4",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "LED PANEL",
+          1,
+          "PINHEADER1X4N",
+          "U7",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": "undefined"
+          }
+        ]
+      ],
+      "updateTime": 1746606310,
+      "createTime": 1746603991,
+      "histories": [],
+      "created_at": "2025-05-07 09:46:31",
+      "updated_at": "2025-05-07 10:25:10"
+    },
+    {
+      "uuid": "80fc67a91f0b8a9ed3697936fe1d9036",
+      "puuid": "5285d57282c0f31f2f8fad6f0230c914",
+      "title": "PCB_Led Panel Mega SD",
+      "filename": "PCB_Led Panel Mega SD.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "82f5897e282c46ed83dd0855ab5a852b": 1,
+        "308f4255ccf94b899f21ce671da619e5": 3,
+        "619489e674074de888fe8dd8f6b9799e": 1,
+        "9ea59130ae074fa3abe27de8cbf71d91": 4
       },
       "BOM": [
         [
@@ -89,11 +179,11 @@
           }
         ]
       ],
-      "updateTime": 1746606193,
-      "createTime": 1746603991,
+      "updateTime": 1746607168,
+      "createTime": 1746606323,
       "histories": [],
-      "created_at": "2025-05-07 09:46:31",
-      "updated_at": "2025-05-07 10:23:13"
+      "created_at": "2025-05-07 10:25:23",
+      "updated_at": "2025-05-07 10:39:28"
     }
   ],
   "sort": [
@@ -104,5 +194,5 @@
   "title": "Led Panel Mega SD",
   "foldername": "Led Panel Mega SD",
   "schfilename": "Led Panel Mega SD.json",
-  "schfilemtime": 1746606193676
+  "schfilemtime": 1746606310761
 }
