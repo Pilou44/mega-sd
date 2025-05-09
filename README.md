@@ -14,10 +14,10 @@ Beaucoup de produits faisant cela existent déjà dans le commerce. Le but de ce
 #### Hardware 1.0 ([Release hw_1.0](https://github.com/Pilou44/mega-sd/releases/tag/hw_1.0))
 Pour débuter, je suis parti sur une extension se branchant à la Mega Drive via le port d'extension, comme un Mega-CD.
 
-Le projet est architecturé autour d'une carte de test STM32 de chez DiyMore ([lien](https://www.diymore.cc/products/stm32f4-discovery-stm32f407vgt6-microcontroller-32bit-flash-mcu-arm-cortex-m4-core-development-board?_pos=33&_sid=8834dc3dc&_ss=r)). 
-Les bus d'adresses et de données, ainsi que les signaux /ROM, /LWR et /UWR sont transmis au STM32 via des émetteurs-récepteurs SN74LVC245 afin de convertir le 5V en 3.3V. Ils arrivent sur les ports PB, PC et PD.
-Une alimentation externe 5V est utilisée, et elle est pilotée par un transistor de façon à ce que le projet ne soit actif que lorsque le 5V de la Mega Drive est détecté.
-La carte SD est connectée via le SPI1 (ports PA).
+Le projet est architecturé autour d'une carte de test STM32 de chez DiyMore ([lien](https://www.diymore.cc/products/stm32f4-discovery-stm32f407vgt6-microcontroller-32bit-flash-mcu-arm-cortex-m4-core-development-board?_pos=33&_sid=8834dc3dc&_ss=r)).\
+Les bus d'adresses et de données, ainsi que les signaux /ROM, /LWR et /UWR sont transmis au STM32 via des émetteurs-récepteurs SN74LVC245 afin de convertir le 5V en 3.3V. Ils arrivent sur les ports PB, PC et PD.\
+Une alimentation externe 5V est utilisée, et elle est pilotée par un transistor de façon à ce que le projet ne soit actif que lorsque le 5V de la Mega Drive est détecté.\
+La carte SD est connectée via le SPI1 (ports PA).\
 Les ports PE sont dirigés vers un connecteur pour pouvoir ajouter une extension comme un FPGA.
 
 Cette première version a un gros défaut : les SN74LVC245 sur le bus de données sont activés automatiquement par le connecteur de la Mega Drive. Cela implique un conflit potentiel si une cartouche est insérée. **Il ne faut donc jamais le brancher en même temps qu'une cartouche.**
@@ -41,10 +41,10 @@ Many commercial products already do this. The purpose of this project is not to 
 ### Hardware 1.0  ([Release hw_1.0](https://github.com/Pilou44/mega-sd/releases/tag/hw_1.0))
 To start, I chose to make an extension that connects to the Mega Drive via the expansion port, like a Mega-CD.
 
-The project is based on a DiyMore STM32 test board ([link](https://www.diymore.cc/products/stm32f4-discovery-stm32f407vgt6-microcontroller-32bit-flash-mcu-arm-cortex-m4-core-development-board?_pos=33&_sid=8834dc3dc&_ss=r)).
-The address and data buses, as well as the /ROM, /LWR and /UWR signals, are sent to the STM32 via SN74LVC245 transceivers to convert 5V to 3.3V. They arrive on the PB, PC, and PD ports.
-An external 5V power supply is used and is controlled by a transistor so that the project is only active when the 5V from the Mega Drive is detected.
-The SD card is connected via SPI1 (PA ports).
+The project is based on a DiyMore STM32 test board ([link](https://www.diymore.cc/products/stm32f4-discovery-stm32f407vgt6-microcontroller-32bit-flash-mcu-arm-cortex-m4-core-development-board?_pos=33&_sid=8834dc3dc&_ss=r)).\
+The address and data buses, as well as the /ROM, /LWR and /UWR signals, are sent to the STM32 via SN74LVC245 transceivers to convert 5V to 3.3V. They arrive on the PB, PC, and PD ports.\
+An external 5V power supply is used and is controlled by a transistor so that the project is only active when the 5V from the Mega Drive is detected.\
+The SD card is connected via SPI1 (PA ports).\
 The PE ports are routed to a connector for potential future expansion with an FPGA.
 
 This first version has a major flaw: the SN74LVC245 on the data bus are automatically enabled by the Mega Drive connector. This creates a potential conflict if a cartridge is inserted. **So you must never connect this in parallel with a cartridge.**
