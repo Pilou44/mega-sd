@@ -6,7 +6,7 @@ Beaucoup de produits faisant cela existent déjà dans le commerce. Le but de ce
 
 # Première version
 
-### Hardware 1.0 [Release hw_1.0](https://github.com/Pilou44/mega-sd/releases/tag/hw_1.0)
+### Hardware 1.0 ([Release GitHub hw_1.0](https://github.com/Pilou44/mega-sd/releases/tag/hw_1.0))
 
 Pour débuter, je suis parti sur une extension se branchant à la Mega Drive via le port d'extension, comme un Mega-CD.
 
