@@ -1,0 +1,23 @@
+{
+    "env": {
+        "includePath": [
+            "${workspaceFolder}/res",
+            "${GDK}/inc"
+        ]
+    },
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${GDK}/inc",
+                "${GDK}/res",
+                "${workspaceFolder}/res"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "genesis.h": "c",
+        "font.h": "c",
+        "vdp_tile.h": "c",
+        "splash.h": "c",
+        "asm.h": "c",
+        "object.h": "c"
+    }
+}
