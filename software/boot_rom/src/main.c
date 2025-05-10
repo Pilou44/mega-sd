@@ -13,7 +13,7 @@
 
 int main(u16 hard)
 {
-    showSplash();
+    u16 gameCount = showSplash();
 
     while (TRUE)
     {

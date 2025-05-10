@@ -1,15 +1,19 @@
 #include "splash.h"
 #include "splash_res.h"
+#include "menu_memory.h"
 
 
 u16 palette[64];
 
 void fadeIn(s16 palet, u16 numFrame, bool async);
 
-void showSplash()
-{
-    volatile u16 *menu_comm = (u16 *)MENU_COMM_ADDR;
-    *menu_comm = 0;
+void my_func() {
+    menu_comm = 0;
+    if (menu_comm == 1) {  }
+}
+
+u16 showSplash() {
+    menu_gamecount = 0;
 
     Sprite *star;
     u16 ind;
@@ -38,7 +42,8 @@ void showSplash()
     MAP_scrollTo(bgb, camX, 0);
 
     VDP_setTextPalette(1);
-    VDP_drawText("Wechant Loup presents", 9, 22);
+    VDP_drawText("Wechant Loup", 14, 21);
+    VDP_drawText("Loading...", 15, 23);
     VDP_setHorizontalScroll(BG_A, 4);
 
     star = SPR_addSprite(&sprite_star, 168, 91, TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
@@ -47,8 +52,7 @@ void showSplash()
 
     fadeIn(0, 20, FALSE);
 
-    while (camX < 320)
-    {
+    while (camX < 320) {
         camX += 4;
         MAP_scrollTo(bgb, camX, 0);
         SPR_update();
@@ -57,15 +61,13 @@ void showSplash()
     fadeIn(1, 20, TRUE);
     SPR_setVisibility(star, VISIBLE);
 
-    while (*menu_comm == 0)
-    {
+    while (menu_gamecount == 0) {
         SPR_update();
         SYS_doVBlankProcess();
     }
     SPR_setVisibility(star, HIDDEN);
     PAL_fadeOut(16, (2 * 16) - 1, 20, TRUE);
-    while (camX < 640)
-    {
+    while (camX < 640) {
         camX += 4;
         MAP_scrollTo(bgb, camX, 0);
         SPR_update();
@@ -75,10 +77,11 @@ void showSplash()
     VDP_clearText(9, 22, 21);
     SPR_releaseSprite(star);
     MEM_free(bgb);
+
+    return menu_gamecount;
 }
 
-void fadeIn(s16 palet, u16 numFrame, bool async)
-{
+void fadeIn(s16 palet, u16 numFrame, bool async) {
     s16 startIndex = palet * 16;
     s16 endIndex = ((palet + 1) * 16) - 1;
     PAL_fadeIn(startIndex, endIndex, &palette[startIndex], numFrame, async);
