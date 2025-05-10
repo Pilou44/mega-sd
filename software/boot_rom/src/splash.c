@@ -1,14 +1,17 @@
 #include "splash.h"
 #include "splash_res.h"
 
+
 u16 palette[64];
 
 void fadeIn(s16 palet, u16 numFrame, bool async);
 
 void showSplash()
 {
+    volatile u16 *menu_comm = (u16 *)MENU_COMM_ADDR;
+    *menu_comm = 0;
+
     Sprite *star;
-    s16 wait = 0;
     u16 ind;
 
     u16 bgBaseTileIndex[2];
@@ -53,9 +56,9 @@ void showSplash()
     }
     fadeIn(1, 20, TRUE);
     SPR_setVisibility(star, VISIBLE);
-    while (wait < 180)
+
+    while (*menu_comm == 0)
     {
-        wait++;
         SPR_update();
         SYS_doVBlankProcess();
     }
