@@ -2,17 +2,11 @@
 #include "splash_res.h"
 #include "menu_memory.h"
 
-
 u16 palette[64];
 
 void fadeIn(s16 palet, u16 numFrame, bool async);
 
-void my_func() {
-    menu_comm = 0;
-    if (menu_comm == 1) {  }
-}
-
-u16 showSplash() {
+void showSplash() {
     menu_gamecount = 0;
 
     Sprite *star;
@@ -77,8 +71,6 @@ u16 showSplash() {
     VDP_clearText(9, 22, 21);
     SPR_releaseSprite(star);
     MEM_free(bgb);
-
-    return menu_gamecount;
 }
 
 void fadeIn(s16 palet, u16 numFrame, bool async) {

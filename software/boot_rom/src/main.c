@@ -9,17 +9,17 @@
 #include "splash.h"
 #include "title.h"
 #include "level.h"
+#include "games.h"
 
 
-int main(u16 hard)
-{
-    u16 gameCount = showSplash();
+int main(u16 hard) {
+    showSplash();
 
-    while (TRUE)
-    {
-        u8 players = showTitle();
-        showLevel(players);
-    }
+    //while (TRUE) {
+        showGames();
+        //u8 players = showTitle();
+        //showLevel(players);
+    //}
 
     return 0;
 }

@@ -5,6 +5,8 @@
         "vdp_tile.h": "c",
         "splash.h": "c",
         "asm.h": "c",
-        "object.h": "c"
+        "object.h": "c",
+        "level_res.h": "c",
+        "menu_memory.h": "c"
     }
 }
