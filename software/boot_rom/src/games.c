@@ -3,14 +3,21 @@
 
 #define GAMES_PER_PAGE 10
 
-u16 selectedGame;
+#define NEXT_PAGE -1
+#define PREVIOUS_PAGE -2
+
+s32 selectedGame;
 u8 page;
+u16 startIndex;
+u16 endIndex;
+u8 pageCount;
 //bool upPressed;
 //bool downPressed;
 
 static void displayGamePage();
 static void handleInput();
 static void printGameName(u16 position);
+static void joyEvent(u16 joy, u16 changed, u16 state);
 
 void showGames() {
     page = 0;
@@ -24,8 +31,8 @@ void showGames() {
     PAL_setColors(32, (u16 *)palette_green, 16, DMA);
     PAL_setColors(48, (u16 *)palette_blue, 16, DMA);
 
-    //JOY_init();
-    //JOY_setEventHandler(joyEvent);
+    JOY_init();
+    JOY_setEventHandler(joyEvent);
 
     
     while (TRUE) {
@@ -36,11 +43,11 @@ void showGames() {
 }
 
 static void displayGamePage() {
-    u16 startIndex = page * GAMES_PER_PAGE;
+    startIndex = page * GAMES_PER_PAGE;
     u16 lastIndex = menu_gamecount - 1;
     u16 pageLastIndex = (page +1) * GAMES_PER_PAGE - 1;
-    u16 endIndex = (pageLastIndex > lastIndex) ? lastIndex : pageLastIndex;
-    u16 pageCount = lastIndex / GAMES_PER_PAGE + 1;
+    endIndex = (pageLastIndex > lastIndex) ? lastIndex : pageLastIndex;
+    pageCount = lastIndex / GAMES_PER_PAGE + 1;
 
     VDP_setTextPalette(2);
 
@@ -60,11 +67,12 @@ static void displayGamePage() {
 
     u8 nextX = (page == 0) ? 1 : 13;
 
-    VDP_setTextPalette(2);
     if (page > 0) {
+        VDP_setTextPalette(selectedGame == PREVIOUS_PAGE ? 2 : 3);
         VDP_drawText("< Previous", 1, nextY);
     }
     if (page < pageCount - 1) {
+        VDP_setTextPalette(selectedGame == NEXT_PAGE ? 2 : 3);
         VDP_drawText("Next >", nextX, nextY);
     }
 }
@@ -77,4 +85,36 @@ static void printGameName(u16 position) {
     name[GAME_ENTRY_SIZE] = 0; // null-terminate
 
     VDP_drawText(name, 2, 4 + 2 * (position % GAMES_PER_PAGE));
+}
+
+static void joyEvent(u16 joy, u16 changed, u16 state) {
+    if (changed & state & BUTTON_START) {
+        if (selectedGame >= startIndex && selectedGame <= endIndex) {
+            menu_gameselected = selectedGame + 1;
+        }
+    } else if (changed & state & BUTTON_UP) {
+        if (selectedGame > startIndex && selectedGame <= endIndex) {
+            selectedGame--;
+        } else if (selectedGame == NEXT_PAGE && page == 0) {
+            selectedGame = endIndex;
+        } else if (selectedGame == NEXT_PAGE) {
+            selectedGame = PREVIOUS_PAGE;
+        } else if (selectedGame == PREVIOUS_PAGE) {
+            selectedGame = endIndex;
+        }
+    } else if (changed & state & BUTTON_DOWN) {
+        if (selectedGame >= startIndex && selectedGame < endIndex) {
+            selectedGame++;
+        } else if (page == 0) {
+            selectedGame = NEXT_PAGE;
+        } else if (selectedGame == endIndex) {
+            selectedGame = PREVIOUS_PAGE;
+        } else if (page < pageCount - 1) {
+            selectedGame = NEXT_PAGE;
+        }
+    } else if (changed & state & BUTTON_LEFT) {
+
+    } else if (changed & state & BUTTON_RIGHT) {
+
+    }
 }

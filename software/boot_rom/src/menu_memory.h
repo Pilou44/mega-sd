@@ -8,7 +8,7 @@
 #define GAME_ENTRY_SIZE 32
 
 #define menu_gamecount (*(volatile u16*)MENU_LIST_ADDR)
-#define menu_gameselected (*(volatile u16*)MENU_LIST_ADDR + 2)
+#define menu_gameselected (*(volatile u16*)(MENU_LIST_ADDR + 2))
 #define menu_gamelist  ((volatile u8*)(MENU_LIST_ADDR + 4))
 
 #endif // _MEMORY_H_
