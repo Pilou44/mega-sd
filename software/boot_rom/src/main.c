@@ -1,25 +1,11 @@
-/*
- * main.c
- *
- *  Created on: 7 avr. 2022
- *      Author: guill
- */
-
 #include <genesis.h>
 #include "splash.h"
-#include "title.h"
-#include "level.h"
 #include "games.h"
 
-
-int main(u16 hard) {
+int main(bool hardReset) {
     showSplash();
 
-    //while (TRUE) {
-        showGames();
-        //u8 players = showTitle();
-        //showLevel(players);
-    //}
+    showGames();
 
     return 0;
 }
