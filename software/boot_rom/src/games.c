@@ -25,7 +25,7 @@ void showGames() {
     PAL_setColors(0, (u16 *)palette_red, 16, DMA);
     PAL_setColors(16, (u16 *)palette_black, 16, DMA);
     PAL_setColors(32, (u16 *)palette_green, 16, DMA);
-    PAL_setColors(48, (u16 *)palette_blue, 16, DMA);
+    PAL_setColors(48, (u16 *)palette_grey, 16, DMA);
 
     JOY_init();
     JOY_setEventHandler(joyEvent);
@@ -52,7 +52,7 @@ static void displayGamePage() {
         selectedGame = PREVIOUS_PAGE;
     }
 
-    VDP_setTextPalette(2);
+    VDP_setTextPalette(3);
 
     char buffer[32];
     sprintf(buffer, "%d games found", menu_gamecount);
@@ -87,7 +87,7 @@ static void printGameName(u16 position) {
     memcpy(name, (const char *)(menu_gamelist + position * GAME_ENTRY_SIZE), GAME_ENTRY_SIZE);
     name[GAME_ENTRY_SIZE] = 0; // null-terminate
 
-    VDP_drawText(name, 2, 4 + 2 * (position % GAMES_PER_PAGE));
+    VDP_drawText(name, 3, 4 + 2 * (position % GAMES_PER_PAGE));
 }
 
 static void clearAllTexts() {
