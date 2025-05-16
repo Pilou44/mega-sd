@@ -11,19 +11,15 @@ u8 page;
 u16 startIndex;
 u16 endIndex;
 u8 pageCount;
-//bool upPressed;
-//bool downPressed;
 
 static void displayGamePage();
-static void handleInput();
 static void printGameName(u16 position);
 static void joyEvent(u16 joy, u16 changed, u16 state);
+static void clearAllTexts();
 
 void showGames() {
     page = 0;
     selectedGame = 0;
-    //upPressed = FALSE;
-    //downPressed = FALSE;
 
     
     PAL_setColors(0, (u16 *)palette_red, 16, DMA);
@@ -36,7 +32,6 @@ void showGames() {
 
     
     while (TRUE) {
-        //handleInput();
         displayGamePage();
         SYS_doVBlankProcess();
     }
@@ -48,6 +43,14 @@ static void displayGamePage() {
     u16 pageLastIndex = (page +1) * GAMES_PER_PAGE - 1;
     endIndex = (pageLastIndex > lastIndex) ? lastIndex : pageLastIndex;
     pageCount = lastIndex / GAMES_PER_PAGE + 1;
+
+    if (selectedGame >= 0 && (selectedGame < startIndex || selectedGame > endIndex)) {
+        selectedGame = startIndex;
+    } else if (selectedGame == PREVIOUS_PAGE && page == 0) {
+        selectedGame = NEXT_PAGE;
+    } else if (selectedGame == NEXT_PAGE && page == pageCount - 1) {
+        selectedGame = PREVIOUS_PAGE;
+    }
 
     VDP_setTextPalette(2);
 
@@ -87,6 +90,10 @@ static void printGameName(u16 position) {
     VDP_drawText(name, 2, 4 + 2 * (position % GAMES_PER_PAGE));
 }
 
+static void clearAllTexts() {
+    VDP_clearTextArea(0, 0, 60, 25);
+}
+
 static void joyEvent(u16 joy, u16 changed, u16 state) {
     if (changed & state & BUTTON_START) {
         if (selectedGame >= startIndex && selectedGame <= endIndex) {
@@ -113,8 +120,20 @@ static void joyEvent(u16 joy, u16 changed, u16 state) {
             selectedGame = NEXT_PAGE;
         }
     } else if (changed & state & BUTTON_LEFT) {
-
+        if (selectedGame == NEXT_PAGE && page > 0) {
+            selectedGame = PREVIOUS_PAGE;
+        }
     } else if (changed & state & BUTTON_RIGHT) {
-
+        if (selectedGame == PREVIOUS_PAGE && page < pageCount - 1) {
+            selectedGame = NEXT_PAGE;
+        }
+    } else if (changed & state & (BUTTON_A | BUTTON_B | BUTTON_C)) {
+        if (selectedGame == PREVIOUS_PAGE) {
+            page--;
+            clearAllTexts();
+        } else if (selectedGame == NEXT_PAGE) {
+            page++;
+            clearAllTexts();
+        }
     }
 }
