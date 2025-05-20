@@ -23,7 +23,8 @@ Les ports PE sont dirigés vers un connecteur pour pouvoir ajouter une extension
 Ce hardware présente quelques problèmes nécessitant des patches :
 - Il y a un problème au niveau du switch gérant le mode de boot du STM32. La LED ne fonctionne pas et il est impossible de changer ce mode de boot sans l'alimentation externe.
 - Il y a un problème de masse : elle est séparée en 2, et c'est le STM32 qui fait la jonction entre ces deux parties.
-- La PIN 8 du STM32 n'est pas branchée aux autres PIN +3.3V du STM32.\
+- La PIN 8 du STM32 n'est pas branchée aux autres PIN +3.3V du STM32.
+
 Un autre problème (non patchable) est que la largeur des pistes +3.3V du STM32 et +5V de l'USB ne sont pas bonnes.
 
 Cette première version a un gros défaut : les SN74LVC245 sur le bus de données sont activés automatiquement par le connecteur de la Mega Drive. Cela implique un conflit potentiel si une cartouche est insérée. **Il ne faut donc jamais le brancher en même temps qu'une cartouche.**
@@ -56,7 +57,8 @@ The PE ports are routed to a connector for potential future expansion with an FP
 This hardware presents a few issues requiring patches:
 - There is an issue with the switch managing the STM32 boot mode. The LED does not work, and it is impossible to change the boot mode without the external power supply.
 - There is a ground problem: the ground plane is split in two, and only the STM32 bridges these two areas.
-- Pin 8 of the STM32 is not connected to the other +3.3V pins of the STM32.\
+- Pin 8 of the STM32 is not connected to the other +3.3V pins of the STM32.
+
 Another (unpatchable) issue is that the track width for the +3.3V STM32 and the USB +5V are not adequate.
 
 This first version has a major flaw: the SN74LVC245 on the data bus are automatically enabled by the Mega Drive connector. This creates a potential conflict if a cartridge is inserted. **So you must never connect this in parallel with a cartridge.**
