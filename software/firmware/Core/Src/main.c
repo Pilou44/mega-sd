@@ -96,6 +96,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0); // ou la pin que tu as reliée à ta LED
+    HAL_Delay(500); // 500 ms
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
