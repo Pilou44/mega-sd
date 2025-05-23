@@ -46,13 +46,18 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+// Variables FatFS
+FATFS fs;
+FIL file;
+FRESULT res;
+DIR dir;
+FILINFO fno;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void list_sd_root(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -98,10 +103,10 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  list_sd_root();
   while (1)
   {
     HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0);
-    log_uart("Toggle LED");
     HAL_Delay(500); // 500 ms
     /* USER CODE END WHILE */
 
@@ -152,7 +157,31 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void list_sd_root(void) {
+    // Monte la SD
+	FRESULT result = f_mount(&fs, "", 1);
+    if (result == FR_OK) {
+        log_uart("SD mounted");
+    } else {
+        log_uart("Mount failed: %d", result);
+        return;
+    }
 
+    // Ouvre le répertoire racine
+    res = f_opendir(&dir, "/");
+    if (res == FR_OK) {
+        log_uart("Root dir opened");
+        while (1) {
+            res = f_readdir(&dir, &fno);
+            if (res != FR_OK || fno.fname[0] == 0) break;
+            // Affiche le nom du fichier ou du dossier
+            log_uart("%s", fno.fname);
+        }
+        f_closedir(&dir);
+    } else {
+        log_uart("Open root failed");
+    }
+}
 /* USER CODE END 4 */
 
 /**

@@ -35,6 +35,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include <string.h>
 #include "ff_gen_drv.h"
+#include "log_uart.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -82,7 +83,8 @@ DSTATUS USER_initialize (
 )
 {
   /* USER CODE BEGIN INIT */
-	return SD_disk_initialize(pdrv);
+	BYTE result = SD_disk_initialize(pdrv);
+	return result;
   /* USER CODE END INIT */
 }
 
@@ -158,7 +160,6 @@ DRESULT USER_ioctl (
 )
 {
   /* USER CODE BEGIN IOCTL */
-    DRESULT res = RES_ERROR;
     return SD_disk_ioctl(pdrv, cmd, buff);
   /* USER CODE END IOCTL */
 }

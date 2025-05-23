@@ -21,14 +21,12 @@ static uint8_t PowerFlag = 0;				/* Power flag */
 static void SELECT(void)
 {
 	HAL_GPIO_WritePin(SD_CS_PORT, SD_CS_PIN, GPIO_PIN_RESET);
-	HAL_Delay(1);
 }
 
 /* slave deselect */
 static void DESELECT(void)
 {
 	HAL_GPIO_WritePin(SD_CS_PORT, SD_CS_PIN, GPIO_PIN_SET);
-	HAL_Delay(1);
 }
 
 /* SPI transmit a byte */
@@ -84,41 +82,13 @@ static uint8_t SD_ReadyWait(void)
 }
 
 /* power on */
-static void SD_PowerOn(void) 
+static void SD_PowerOn(void)
 {
-	uint8_t args[6];
-	uint32_t cnt = 0x1FFF;
-
-	/* transmit bytes to wake up */
-	DESELECT();
-	for(int i = 0; i < 10; i++)
-	{
-		SPI_TxByte(0xFF);
-	}
-
-	/* slave select */
-	SELECT();
-
-	/* make idle state */
-	args[0] = CMD0;		/* CMD0:GO_IDLE_STATE */
-	args[1] = 0;
-	args[2] = 0;
-	args[3] = 0;
-	args[4] = 0;
-	args[5] = 0x95;		/* CRC */
-
-	SPI_TxBuffer(args, sizeof(args));
-
-	/* wait response */
-	while ((SPI_RxByte() != 0x01) && cnt)
-	{
-		cnt--;
-	}
-
-	DESELECT();
-	SPI_TxByte(0XFF);
-
-	PowerFlag = 1;
+    DESELECT();
+    for (int i = 0; i < 10; i++) SPI_TxByte(0xFF);
+    DESELECT();
+    SPI_RxByte(); // un dernier dummy clock pour être sûr
+    PowerFlag = 1;
 }
 
 /* power off */
@@ -207,36 +177,40 @@ static bool SD_TxDataBlock(const uint8_t *buff, BYTE token)
 /* transmit command */
 static BYTE SD_SendCmd(BYTE cmd, uint32_t arg)
 {
-	uint8_t crc, res;
+    uint8_t n, res, crc;
 
-	/* wait SD ready */
-	if (SD_ReadyWait() != 0xFF) return 0xFF;
+    // 1. Toujours relâcher la SD avant d'envoyer une commande
+    DESELECT();
+    SPI_RxByte(); // 1 dummy clock
 
-	/* transmit command */
-	SPI_TxByte(cmd); 					/* Command */
-	SPI_TxByte((uint8_t)(arg >> 24)); 	/* Argument[31..24] */
-	SPI_TxByte((uint8_t)(arg >> 16)); 	/* Argument[23..16] */
-	SPI_TxByte((uint8_t)(arg >> 8)); 	/* Argument[15..8] */
-	SPI_TxByte((uint8_t)arg); 			/* Argument[7..0] */
+    // 2. Sélectionner la SD et attendre 1 dummy clock
+    SELECT();
+    SPI_RxByte();
 
-	/* prepare CRC */
-	if(cmd == CMD0) crc = 0x95;	/* CRC for CMD0(0) */
-	else if(cmd == CMD8) crc = 0x87;	/* CRC for CMD8(0x1AA) */
-	else crc = 1;
+    // 3. Envoyer la commande
+    SPI_TxByte(cmd);
+    SPI_TxByte((uint8_t)(arg >> 24));
+    SPI_TxByte((uint8_t)(arg >> 16));
+    SPI_TxByte((uint8_t)(arg >> 8));
+    SPI_TxByte((uint8_t)arg);
 
-	/* transmit CRC */
-	SPI_TxByte(crc);
+    crc = 0x01; // Default dummy CRC
+    if (cmd == CMD0) crc = 0x95;
+    if (cmd == CMD8) crc = 0x87;
+    SPI_TxByte(crc);
 
-	/* Skip a stuff byte when STOP_TRANSMISSION */
-	if (cmd == CMD12) SPI_RxByte();
+    // 4. Pour CMD12, skip un octet
+    if (cmd == CMD12) SPI_RxByte();
 
-	/* receive response */
-	uint8_t n = 10;
-	do {
-		res = SPI_RxByte();
-	} while ((res & 0x80) && --n);
+    // 5. Attendre la réponse (bit 7 à 0)
+    n = 20;
+    do {
+        res = SPI_RxByte();
+    } while ((res & 0x80) && --n);
 
-	return res;
+    // 6. NE PAS DESELECT ici si tu attends un transfert de données juste après !
+
+    return res;
 }
 
 /***************************************
@@ -256,9 +230,6 @@ DSTATUS SD_disk_initialize(BYTE drv)
 
 	/* power on */
 	SD_PowerOn();
-
-	/* slave select */
-	SELECT();
 
 	/* check disk type */
 	type = 0;
@@ -324,10 +295,6 @@ DSTATUS SD_disk_initialize(BYTE drv)
 	}
 
 	CardType = type;
-
-	/* Idle */
-	DESELECT();
-	SPI_RxByte();
 
 	/* Clear STA_NOINIT */
 	if (type)
