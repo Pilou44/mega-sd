@@ -58,6 +58,7 @@ FILINFO fno;
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 void list_sd_root(void);
+void test_read_file(const char *filename);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -104,6 +105,13 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   list_sd_root();
+  test_read_file("test.txt");
+  test_read_file("roms/Sonic The Hedgehog 2 (World).md");
+  test_read_file("roms/Sonic2.md");
+  test_read_file("roms/Sonic The Hedgehog (USA, Europe).md");
+  test_read_file("roms/Sonic.md");
+  test_read_file("roms/Columns (W) (REV01) [!].gen");
+  test_read_file("roms/Columns.gen");
   while (1)
   {
     HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0);
@@ -154,6 +162,40 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+void test_read_file(const char *filename) {
+    FIL file;
+    FRESULT res;
+    UINT br;
+    uint8_t buffer[4096];
+    uint32_t total = 0;
+    uint32_t t0 = HAL_GetTick();
+
+    // Ouvre le fichier (remplace le nom par celui de ta ROM)
+    log_uart("Ouverture de %s", filename);
+    res = f_open(&file, filename, FA_READ);
+    if (res != FR_OK) {
+        log_uart("Open error: %d", res);
+        return;
+    }
+
+    log_uart("Taille attendue FatFS = %lu", f_size(&file));
+
+    log_uart("Taille du buffer %d", sizeof(buffer));
+
+    do {
+        res = f_read(&file, buffer, sizeof(buffer), &br);
+        total += br;
+//        log_uart("Lu %ld octets (res=%d, br=%d)", total, res, br);
+        if (res != FR_OK) {
+        	log_uart("Read error (%s): %d", filename, res);
+            break;
+        }
+    } while (br == sizeof(buffer));
+
+    f_close(&file);
+    log_uart("Lecture terminee (%s): %ld octets lus en %ld ms", filename, total, HAL_GetTick() - t0);
 }
 
 /* USER CODE BEGIN 4 */
