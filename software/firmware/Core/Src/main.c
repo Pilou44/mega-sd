@@ -174,7 +174,8 @@ void test_read_file(const char *filename) {
     FIL file;
     FRESULT res;
     UINT br;
-    uint8_t buffer[4096];
+//    uint8_t buffer[4096];
+    uint8_t buffer[32768];
     uint32_t total = 0;
     uint32_t t0 = HAL_GetTick();
 
