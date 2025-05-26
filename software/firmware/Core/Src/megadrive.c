@@ -12,12 +12,13 @@
 
 int load_rom(const char *path);
 uint16_t get_rom_word(uint32_t addr);
+void main_megadrive_loop(void);
 
 FIL rom_file;
 uint32_t rom_size = 0;
 
-// Pour un buffer de 4 Ko (8 secteurs, 2048 mots 16 bits)
-#define ROM_BUFFER_SIZE 4096
+// Pour un buffer de 32 Ko (64 secteurs, 16384 mots 16 bits)
+#define ROM_BUFFER_SIZE 32768
 uint8_t rom_buffer[ROM_BUFFER_SIZE];
 uint32_t buffer_addr_start = 0; // Adresse de début du buffer dans la ROM
 
@@ -77,3 +78,15 @@ void main_megadrive_loop(void) {
     }
 }
 
+void megadrive_boot(void) {
+	// 1. Ouvre la ROM
+	if (!load_rom("boot/Sonic.md")) {
+		log_uart("Echec ouverture ROM boot/Sonic.md");
+		while(1); // Stoppe tout si erreur
+	}
+
+	log_uart("En attente Mega Drive...");
+
+	// 2. Boucle principale, scrute /ROM
+	main_megadrive_loop();
+}

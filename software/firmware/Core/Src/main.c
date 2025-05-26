@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "log_uart.h"
+#include "megadrive.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -104,18 +105,27 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  list_sd_root();
-  test_read_file("test.txt");
-  test_read_file("roms/Sonic The Hedgehog 2 (World).md");
-  test_read_file("roms/Sonic2.md");
-  test_read_file("roms/Sonic The Hedgehog (USA, Europe).md");
-  test_read_file("roms/Sonic.md");
-  test_read_file("roms/Columns (W) (REV01) [!].gen");
-  test_read_file("roms/Columns.gen");
+  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0);
+
+  FRESULT result = f_mount(&fs, "", 1);
+  if (result != FR_OK) {
+      log_uart("Mount failed: %d", result);
+      while(1); // Stoppe tout
+  }
+
+  megadrive_boot();
+//  list_sd_root();
+//  test_read_file("test.txt");
+//  test_read_file("roms/Sonic The Hedgehog 2 (World).md");
+//  test_read_file("roms/Sonic2.md");
+//  test_read_file("roms/Sonic The Hedgehog (USA, Europe).md");
+//  test_read_file("roms/Sonic.md");
+//  test_read_file("roms/Columns (W) (REV01) [!].gen");
+//  test_read_file("roms/Columns.gen");
   while (1)
   {
-    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0);
-    HAL_Delay(500); // 500 ms
+//    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0);
+//    HAL_Delay(500); // 500 ms
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
