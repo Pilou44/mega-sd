@@ -59,6 +59,7 @@ uint16_t get_rom_word(uint32_t addr) {
 
 // Boucle principale pour interagir avec la Mega Drive
 void main_megadrive_loop(void) {
+    uint32_t access_count = 0;
     while (1) {
         // Détecte un accès Mega Drive (exemple : polling sur /ROM actif bas)
         if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5) == GPIO_PIN_RESET) {
@@ -71,6 +72,10 @@ void main_megadrive_loop(void) {
             uint16_t data = get_rom_word(addr);
             // Place la donnée sur le bus data (port D)
             GPIOD->ODR = data;
+
+            if (++access_count % 10000 == 0) {
+                log_uart("Acces Mega Drive #%lu, addr=0x%06lX", access_count, addr);
+            }
 
             // (Optionnel) Attendre la fin du cycle /ROM ou synchroniser le timing
         }
