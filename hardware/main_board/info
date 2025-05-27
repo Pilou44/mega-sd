@@ -4,7 +4,7 @@
   "name": "Mega SD",
   "content": "",
   "created_at": "2025-04-24 10:34:29",
-  "updated_at": "2025-05-27 15:26:42",
+  "updated_at": "2025-05-27 15:39:48",
   "stick": "",
   "documents": [
     {
@@ -24,7 +24,8 @@
         "65d7214c5ec74df1a111539f45cfdb3e": 1,
         "e6eabbf39254400eb686288e8056c09c": 2,
         "0e47c493c45f453aa736afadf71c886e": 1,
-        "419339f7b5d040bbbd59ebf7709d57ce": 1
+        "419339f7b5d040bbbd59ebf7709d57ce": 1,
+        "a53e016d4c674a70a5ef5bd19b245957": 1
       },
       "BOM": [
         [
@@ -116,6 +117,18 @@
             "Manufacturer": "",
             "Supplier": "",
             "Supplier Part": ""
+          }
+        ],
+        [
+          "Jumper",
+          1,
+          "HDR-TH_3P-P2.54-V-M-1",
+          "J2",
+          {
+            "Manufacturer Part": "NONE",
+            "Manufacturer": "NONE",
+            "Supplier": "",
+            "Supplier Part": "NONE"
           }
         ],
         [
@@ -311,11 +324,11 @@
           }
         ]
       ],
-      "updateTime": 1748352402,
+      "updateTime": 1748353188,
       "createTime": 1745483669,
       "histories": [],
       "created_at": "2025-04-24 10:34:29",
-      "updated_at": "2025-05-27 15:26:42"
+      "updated_at": "2025-05-27 15:39:48"
     },
     {
       "uuid": "6213e7c69d8f70ef292da2d36742f456",
@@ -979,5 +992,5 @@
   "title": "Mega SD",
   "foldername": "Mega SD",
   "schfilename": "Mega SD.json",
-  "schfilemtime": 1748352402649
+  "schfilemtime": 1748353188438
 }
