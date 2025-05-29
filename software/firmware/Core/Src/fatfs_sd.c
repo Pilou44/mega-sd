@@ -247,6 +247,19 @@ DSTATUS SD_disk_initialize(BYTE drv)
 	/* no disk */
 	if(Stat & STA_NODISK) return Stat;
 
+	if (HAL_SPI_DeInit(HSPI_SDCARD) != HAL_OK) {
+	    log_uart("HAL_SPI_DeInit (low speed) failed");
+	    SD_PowerOff();
+	    return STA_NOINIT;
+	}
+	hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256; // Pour <= 400kHz
+	if (HAL_SPI_Init(HSPI_SDCARD) != HAL_OK) {
+		log_uart("HAL_SPI_Init (low speed) failed");
+		SD_PowerOff();
+		return STA_NOINIT;
+	}
+    log_uart("SPI Set to Low Speed for SD Init");
+
 	/* power on */
 	SD_PowerOn();
 
@@ -318,10 +331,28 @@ DSTATUS SD_disk_initialize(BYTE drv)
 	/* Clear STA_NOINIT */
 	if (type)
 	{
-		Stat &= ~STA_NOINIT;
+		log_uart("SD Init Success, CardType: 0x%02X", CardType);
+		if (HAL_SPI_DeInit(HSPI_SDCARD) != HAL_OK) {
+			log_uart("HAL_SPI_DeInit (high speed) failed");
+			SD_PowerOff();
+			return STA_NOINIT;
+		}
+		// Configure ici la vitesse de travail que tu souhaites tester
+		// Par exemple SPI_BAUDRATEPRESCALER_4 pour 21MHz
+		// Ou SPI_BAUDRATEPRESCALER_8 pour 10.5MHz
+		hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8; // <--- VITESSE DE TRAVAIL
+
+		if (HAL_SPI_Init(HSPI_SDCARD) != HAL_OK) {
+			log_uart("HAL_SPI_Init (high speed %s) failed", (hspi1.Init.BaudRatePrescaler == SPI_BAUDRATEPRESCALER_4) ? "21MHz" : "10.5MHz");
+			SD_PowerOff();
+			return STA_NOINIT;
+		}
+		log_uart("SPI Set to High Speed (%s) for Data Transfer", (hspi1.Init.BaudRatePrescaler == SPI_BAUDRATEPRESCALER_4) ? "21MHz" : "10.5MHz");
+		Stat &= ~STA_NOINIT; // Initialisation réussie
 	}
 	else
 	{
+		log_uart("SD Card Initialization Failed (type == 0 at the end)");
 		/* Initialization failed */
 		SD_PowerOff();
 	}
