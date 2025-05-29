@@ -113,15 +113,15 @@ int main(void)
       while(1); // Stoppe tout
   }
 
-  megadrive_boot();
-//  list_sd_root();
-//  test_read_file("test.txt");
-//  test_read_file("roms/Sonic The Hedgehog 2 (World).md");
-//  test_read_file("roms/Sonic2.md");
-//  test_read_file("roms/Sonic The Hedgehog (USA, Europe).md");
-//  test_read_file("roms/Sonic.md");
-//  test_read_file("roms/Columns (W) (REV01) [!].gen");
-//  test_read_file("roms/Columns.gen");
+//  megadrive_boot();
+  list_sd_root();
+  test_read_file("test.txt");
+  test_read_file("roms/Sonic The Hedgehog 2 (World).md");
+  test_read_file("roms/Sonic2.md");
+  test_read_file("roms/Sonic The Hedgehog (USA, Europe).md");
+  test_read_file("roms/Sonic.md");
+  test_read_file("roms/Columns (W) (REV01) [!].gen");
+  test_read_file("roms/Columns.gen");
   while (1)
   {
 //    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0);
