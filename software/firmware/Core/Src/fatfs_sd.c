@@ -6,6 +6,8 @@
 
 #include "diskio.h"
 #include "fatfs_sd.h"
+#include <string.h>
+#include "log_uart.h"
 
 uint16_t Timer1, Timer2;					/* 1ms Timer Counter */
 
@@ -120,9 +122,25 @@ static bool SD_RxDataBlock(BYTE *buff, UINT len)
 	if(token != 0xFE) return FALSE;
 
 	/* receive data */
-	while(len) {
-	    SPI_RxBytePtr(buff++);
-	    len--;
+	// OPTIMISATION ICI: Recevoir le bloc de données en une fois
+	// Définit un timeout approprié pour la lecture d'un bloc entier.
+	// Tu peux ajuster cette valeur si nécessaire. 100ms est un point de départ.
+	#define SD_BLOCK_RX_TIMEOUT 100
+
+	// Astuce courante : remplir le buffer de réception (buff) avec des octets 0xFF.
+	// Ces 0xFF seront envoyés sur la ligne MOSI pour générer les clocks SPI
+	// pendant que les données réelles de la carte SD sont lues sur la ligne MISO et stockées dans buff.
+	memset(buff, 0xFF, len);
+
+	// Utilise HAL_SPI_TransmitReceive pour envoyer les 0xFF et recevoir les données du bloc.
+	// HSPI_SDCARD est ton handle SPI (ex: hspi1 si tu utilises SPI1 et que CubeMX l'a nommé ainsi).
+	// Assure-toi que HSPI_SDCARD est bien défini et correspond à ton SPI utilisé.
+	if (HAL_SPI_TransmitReceive(HSPI_SDCARD, buff, buff, (uint16_t)len, SD_BLOCK_RX_TIMEOUT) != HAL_OK) {
+		// Une erreur s'est produite pendant le transfert SPI du bloc.
+		// Tu peux ajouter un log ici si tu en as un.
+		// log_uart("HAL_SPI_TransmitReceive error in SD_RxDataBlock");
+		log_uart("Error reading SD card");
+		return FALSE; // Indique une erreur de lecture du bloc
 	}
 
 	/* discard CRC */
