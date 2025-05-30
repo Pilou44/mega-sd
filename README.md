@@ -41,6 +41,11 @@ Enfin, une dernière limitaiton (mais qui n'est pas liée à l'utilisation du po
 
 Pour toutes ces raisons, le hardware 1.0 servira aux premiers tests pour afficher un menu et lancer des jeux de 1 Mo maximum sans sauvegarde, mais sera probablement abandonné rapidement. Une version 1.1 sera conçue pour corriger tout ce qui a été patché. Le hardware 2.0 utilisera probablement le port cartouche, ce qui imposera de grosses modifications hardware.
 
+### Conclusion sur cette version
+Après des tests, les buffers choisis ne vont pas du tout. Les signaux 5V ne sont pas parfaitement isolés du 3.3V, entrainant des fuites qui font monter le +3.3V de la carte à +3.9V. Il n'existe pas dáutre buffers compatibles pin à pin. Il faudrait faire des adaptateurs pour en utiliser d'autres, et celà imposerait de nouveaux patches sur un PCB qui en a déjà trop.
+D'autre part, les wait-states du port d'extension sont très mal documentés. Impossible de trouver une documentation sur comment ils fonctionnent ou comment les utiliser. En revanche, le port cartouche dispose d'une pin /DTACK permettant de piloter des wait-states.
+Devant ces problèmes, la version 1 est abandonnée. Le projet va être entièrement repensé dans une V2 connectée au port cartouche.
+
 # English Version
 
 ## Introduction
