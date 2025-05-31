@@ -4,7 +4,7 @@
   "name": "Mega SD v2",
   "content": "",
   "created_at": "2025-05-30 13:28:58",
-  "updated_at": "2025-05-30 17:16:26",
+  "updated_at": "2025-05-31 19:08:04",
   "stick": "",
   "documents": [
     {
@@ -568,7 +568,8 @@
       "thumb": "/images/thumb-default.png",
       "components": {
         "3832b9f6594e42eda4e229559df716a4": 1,
-        "5eb692365e79437989f74bd8e650252b": 3
+        "5eb692365e79437989f74bd8e650252b": 6,
+        "c4d6ebcdf0f74347baf2febee6020fd2": 1
       },
       "BOM": [
         [
@@ -580,9 +581,9 @@
         ],
         [
           "SN74LVC8T245",
-          3,
+          6,
           "DIP24L_BREAKOUT",
-          "ADDRESS_1,ADDRESS_2,ADDRESS_3",
+          "ADDRESS_1,ADDRESS_2,ADDRESS_3,CTRL_IN,DATA_1,DATA_2",
           {
             "Manufacturer Part": "",
             "Manufacturer": "",
@@ -769,13 +770,25 @@
             "Supplier": "LCSC",
             "Supplier Part": "C2832779"
           }
+        ],
+        [
+          "SN74HCT125N",
+          1,
+          "PDIP-14_L19.3-W6.4-P2.54-LS7.6-BL",
+          "U3",
+          {
+            "Manufacturer Part": "SN74HCT125N",
+            "Manufacturer": "TI(德州仪器)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C154102"
+          }
         ]
       ],
-      "updateTime": 1748617878,
+      "updateTime": 1748711284,
       "createTime": 1748612796,
       "histories": [],
       "created_at": "2025-05-30 15:46:36",
-      "updated_at": "2025-05-30 17:11:18"
+      "updated_at": "2025-05-31 19:08:04"
     }
   ],
   "sort": [
@@ -787,5 +800,5 @@
   "title": "Mega SD v2",
   "foldername": "Mega SD v2",
   "schfilename": "Mega SD v2.json",
-  "schfilemtime": 1748618186351
+  "schfilemtime": 1748711284170
 }
