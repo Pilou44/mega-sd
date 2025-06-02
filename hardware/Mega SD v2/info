@@ -1,10 +1,10 @@
 {
   "uuid": "01a4fdc889f92109090ee8eb7d7e8bfe",
-  "path": "Offline/Mega%20SD%20v2",
+  "path": "Offline/Mega SD v2",
   "name": "Mega SD v2",
   "content": "",
   "created_at": "2025-05-30 13:28:58",
-  "updated_at": "2025-06-02 09:40:11",
+  "updated_at": "2025-06-02 13:03:58",
   "stick": "",
   "documents": [
     {
@@ -23,7 +23,521 @@
         "c8920d8ff2a8477796e7660bdbba4bf7": 1,
         "ff6c91a15fb44bbc97accf7419a48028": 4,
         "a53e016d4c674a70a5ef5bd19b245957": 1,
-        "f514c4d400f04674baf6f14e62543617": 1
+        "f514c4d400f04674baf6f14e62543617": 1,
+        "b59ab4238375453aa5802f02d2c64e0f": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "SN74LVC8T245",
+          6,
+          "DIP24L_BREAKOUT",
+          "ADDRESS_1,ADDRESS_2,ADDRESS_3,CTRL_IN,DATA_1,DATA_2",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "100nF",
+          15,
+          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
+          "C1,C2,C5,C6,C7,C8,C9,C10,C11,C12,C13,C14,C15,C16,C17",
+          {
+            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
+            "Manufacturer": "Dersonic(德尔创)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C254085"
+          }
+        ],
+        [
+          "10uF",
+          2,
+          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
+          "C3,C4",
+          {
+            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
+            "Manufacturer": "Dersonic(德尔创)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C254085"
+          }
+        ],
+        [
+          "HE10-16",
+          1,
+          "HE10-16",
+          "CN1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "HE10-14",
+          1,
+          "PB_PCB_CN_HE10-14",
+          "CN2",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "GENESIS-EDGE-Cart_FeRAM",
+          1,
+          "GENESIS-EDGE",
+          "CON1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "SN74HCT125N",
+          1,
+          "PDIP-14_L19.3-W6.4-P2.54-LS7.6-BL",
+          "CTRL_OUT",
+          {
+            "Manufacturer Part": "SN74HCT125N",
+            "Manufacturer": "TI(德州仪器)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C154102"
+          }
+        ],
+        [
+          "1N5819-TP",
+          1,
+          "DO-41_BD2.4-L4.7-P8.70-D0.9-FD",
+          "D1",
+          {
+            "Manufacturer Part": "1N5819-TP",
+            "Manufacturer": "null",
+            "Supplier": "LCSC",
+            "Supplier Part": "C725292"
+          }
+        ],
+        [
+          "CURRENT_TEST",
+          1,
+          "DEBUG PINHEADER1X2",
+          "H1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": "undefined"
+          }
+        ],
+        [
+          "Jumper",
+          2,
+          "HDR-TH_3P-P2.54-V-M-1",
+          "J2,J3",
+          {
+            "Manufacturer Part": "NONE",
+            "Manufacturer": "NONE",
+            "Supplier": "",
+            "Supplier Part": "NONE"
+          }
+        ],
+        [
+          "LED 3MM",
+          1,
+          "LED_LED3MM",
+          "LED1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "2.45MM_1*2_PIN",
+          1,
+          "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X11_P_2.54MM",
+          "P1",
+          {
+            "Manufacturer Part": "Female headerHDR1X8-2.54",
+            "Manufacturer": "BOOMELE",
+            "Supplier": "LCSC",
+            "Supplier Part": "C27438"
+          }
+        ],
+        [
+          "ALIM_SELECT",
+          1,
+          "PINHEADER_2X3",
+          "PH1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "IRF9540NPBF-JSM",
+          1,
+          "TO-220-3_L10.2-W4.6-P2.54-L",
+          "Q1",
+          {
+            "Manufacturer Part": "IRF9540NPBF-JSM",
+            "Manufacturer": "JSMSEMI(杰盛微)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C18187958"
+          }
+        ],
+        [
+          "2N3904L-T92-B",
+          1,
+          "TO-92-3_L4.8-W3.7-P2.54-L",
+          "Q2",
+          {
+            "Manufacturer Part": "2N3904L-T92-B",
+            "Manufacturer": "UTC(友顺)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C94133"
+          }
+        ],
+        [
+          "10kΩ",
+          3,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R1,R2,R3",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "330Ω",
+          1,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R4",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "2.2kΩ",
+          1,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R5",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "ESP101",
+          1,
+          "ESP1010",
+          "SW1",
+          {
+            "Manufacturer Part": "SSSS811101",
+            "Manufacturer": "ALPS",
+            "Supplier": "LCSC",
+            "Supplier Part": "C109335"
+          }
+        ],
+        [
+          "STM32F407 DIYMORE BOARD",
+          1,
+          "DIYMORE STM32",
+          "U1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "LF33CV",
+          1,
+          "TO-220-3_L10.2-W4.5-P2.54-L",
+          "U2",
+          {
+            "Manufacturer Part": "LF33CV",
+            "Manufacturer": "ST(意法半导体)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C2832779"
+          }
+        ],
+        [
+          "LED PANEL",
+          1,
+          "PINHEADER1X4N",
+          "U4",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": "undefined"
+          }
+        ],
+        [
+          "SDCARD_READER",
+          1,
+          "PINHEADER1X6N",
+          "U5",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "UART",
+          1,
+          "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X3",
+          "U7",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ]
+      ],
+      "updateTime": 1748862238,
+      "createTime": 1748604538,
+      "histories": [],
+      "created_at": "2025-05-30 13:28:58",
+      "updated_at": "2025-06-02 13:03:58"
+    },
+    {
+      "uuid": "0c1a7614717c2f1871abccd4ad1b1543",
+      "title": "Boot_Selector",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "5abd2927c4904d76822e7285cc5f9b43": 1,
+        "3d934d82904b4c46a63ba0283a7ea11a": 3,
+        "44dda124c2d24630bf4d220970fa0f7a": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "100nF",
+          2,
+          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
+          "C1,C2",
+          {
+            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
+            "Manufacturer": "Dersonic(德尔创)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C254085"
+          }
+        ],
+        [
+          "10uF",
+          2,
+          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
+          "C3,C4",
+          {
+            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
+            "Manufacturer": "Dersonic(德尔创)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C254085"
+          }
+        ],
+        [
+          "1N5819-TP",
+          1,
+          "DO-41_BD2.4-L4.7-P8.70-D0.9-FD",
+          "D1",
+          {
+            "Manufacturer Part": "1N5819-TP",
+            "Manufacturer": "null",
+            "Supplier": "LCSC",
+            "Supplier Part": "C725292"
+          }
+        ],
+        [
+          "Jumper",
+          2,
+          "HDR-TH_3P-P2.54-V-M-1",
+          "J1,J2",
+          {
+            "Manufacturer Part": "NONE",
+            "Manufacturer": "NONE",
+            "Supplier": "",
+            "Supplier Part": "NONE"
+          }
+        ],
+        [
+          "LED 3MM",
+          1,
+          "LED_LED3MM",
+          "LED1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "2.45MM_1*2_PIN",
+          1,
+          "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X11_P_2.54MM",
+          "P1",
+          {
+            "Manufacturer Part": "Female headerHDR1X8-2.54",
+            "Manufacturer": "BOOMELE",
+            "Supplier": "LCSC",
+            "Supplier Part": "C27438"
+          }
+        ],
+        [
+          "IRF9540NPBF-JSM",
+          1,
+          "TO-220-3_L10.2-W4.6-P2.54-L",
+          "Q1",
+          {
+            "Manufacturer Part": "IRF9540NPBF-JSM",
+            "Manufacturer": "JSMSEMI(杰盛微)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C18187958"
+          }
+        ],
+        [
+          "2N3904L-T92-B",
+          1,
+          "TO-92-3_L4.8-W3.7-P2.54-L",
+          "Q2",
+          {
+            "Manufacturer Part": "2N3904L-T92-B",
+            "Manufacturer": "UTC(友顺)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C94133"
+          }
+        ],
+        [
+          "10kΩ",
+          3,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R1,R2,R3",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "330Ω",
+          1,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R4",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "2.2kΩ",
+          1,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R5",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "ESP101",
+          1,
+          "ESP1010",
+          "SW1",
+          {
+            "Manufacturer Part": "SSSS811101",
+            "Manufacturer": "ALPS",
+            "Supplier": "LCSC",
+            "Supplier Part": "C109335"
+          }
+        ],
+        [
+          "STM32F407 DIYMORE BOARD",
+          1,
+          "DIYMORE STM32",
+          "U1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "LF33CV",
+          1,
+          "TO-220-3_L10.2-W4.5-P2.54-L",
+          "U2",
+          {
+            "Manufacturer Part": "LF33CV",
+            "Manufacturer": "ST(意法半导体)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C2832779"
+          }
+        ]
+      ],
+      "updateTime": 1748610751,
+      "createTime": 1748610382,
+      "histories": [],
+      "created_at": "2025-05-30 15:06:22",
+      "updated_at": "2025-05-30 15:12:31"
+    },
+    {
+      "uuid": "9a1f83136ab642acdbe63222dd40b3db",
+      "title": "STM32",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "73101b89bb3641beb1045d2b21ede147": 1,
+        "6c56ae3a5e204f0c91aa0a43ca5a6ac9": 1,
+        "2d2f3fe1ae1f44b29381afa8a5d55da6": 1,
+        "e6eabbf39254400eb686288e8056c09c": 1,
+        "419339f7b5d040bbbd59ebf7709d57ce": 1,
+        "a53e016d4c674a70a5ef5bd19b245957": 1
       },
       "BOM": [
         [
@@ -310,500 +824,11 @@
           }
         ]
       ],
-      "updateTime": 1748850011,
-      "createTime": 1748604538,
-      "histories": [],
-      "created_at": "2025-05-30 13:28:58",
-      "updated_at": "2025-06-02 09:40:11"
-    },
-    {
-      "uuid": "0c1a7614717c2f1871abccd4ad1b1543",
-      "title": "Boot_Selector",
-      "description": "",
-      "docType": "1",
-      "master": "",
-      "thumb": "/images/thumb-default.png",
-      "components": {
-        "5abd2927c4904d76822e7285cc5f9b43": 1,
-        "3d934d82904b4c46a63ba0283a7ea11a": 3,
-        "44dda124c2d24630bf4d220970fa0f7a": 1
-      },
-      "BOM": [
-        [
-          "Value",
-          "Quantity",
-          "Package",
-          "Components",
-          "CustomPara"
-        ],
-        [
-          "100nF",
-          2,
-          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C1,C2",
-          {
-            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
-            "Manufacturer": "Dersonic(德尔创)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C254085"
-          }
-        ],
-        [
-          "10uF",
-          2,
-          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C3,C4",
-          {
-            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
-            "Manufacturer": "Dersonic(德尔创)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C254085"
-          }
-        ],
-        [
-          "1N5819-TP",
-          1,
-          "DO-41_BD2.4-L4.7-P8.70-D0.9-FD",
-          "D1",
-          {
-            "Manufacturer Part": "1N5819-TP",
-            "Manufacturer": "null",
-            "Supplier": "LCSC",
-            "Supplier Part": "C725292"
-          }
-        ],
-        [
-          "Jumper",
-          2,
-          "HDR-TH_3P-P2.54-V-M-1",
-          "J1,J2",
-          {
-            "Manufacturer Part": "NONE",
-            "Manufacturer": "NONE",
-            "Supplier": "",
-            "Supplier Part": "NONE"
-          }
-        ],
-        [
-          "LED 3MM",
-          1,
-          "LED_LED3MM",
-          "LED1",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": ""
-          }
-        ],
-        [
-          "2.45MM_1*2_PIN",
-          1,
-          "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X11_P_2.54MM",
-          "P1",
-          {
-            "Manufacturer Part": "Female headerHDR1X8-2.54",
-            "Manufacturer": "BOOMELE",
-            "Supplier": "LCSC",
-            "Supplier Part": "C27438"
-          }
-        ],
-        [
-          "IRF9540NPBF-JSM",
-          1,
-          "TO-220-3_L10.2-W4.6-P2.54-L",
-          "Q1",
-          {
-            "Manufacturer Part": "IRF9540NPBF-JSM",
-            "Manufacturer": "JSMSEMI(杰盛微)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C18187958"
-          }
-        ],
-        [
-          "2N3904L-T92-B",
-          1,
-          "TO-92-3_L4.8-W3.7-P2.54-L",
-          "Q2",
-          {
-            "Manufacturer Part": "2N3904L-T92-B",
-            "Manufacturer": "UTC(友顺)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C94133"
-          }
-        ],
-        [
-          "10kΩ",
-          3,
-          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
-          "R1,R2,R3",
-          {
-            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
-            "Manufacturer": "CCO(千志电子)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C120104"
-          }
-        ],
-        [
-          "330Ω",
-          1,
-          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
-          "R4",
-          {
-            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
-            "Manufacturer": "CCO(千志电子)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C120104"
-          }
-        ],
-        [
-          "2.2kΩ",
-          1,
-          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
-          "R5",
-          {
-            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
-            "Manufacturer": "CCO(千志电子)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C120104"
-          }
-        ],
-        [
-          "ESP101",
-          1,
-          "ESP1010",
-          "SW1",
-          {
-            "Manufacturer Part": "SSSS811101",
-            "Manufacturer": "ALPS",
-            "Supplier": "LCSC",
-            "Supplier Part": "C109335"
-          }
-        ],
-        [
-          "STM32F407 DIYMORE BOARD",
-          1,
-          "DIYMORE STM32",
-          "U1",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": ""
-          }
-        ],
-        [
-          "LF33CV",
-          1,
-          "TO-220-3_L10.2-W4.5-P2.54-L",
-          "U2",
-          {
-            "Manufacturer Part": "LF33CV",
-            "Manufacturer": "ST(意法半导体)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C2832779"
-          }
-        ]
-      ],
-      "updateTime": 1748610751,
-      "createTime": 1748610382,
-      "histories": [],
-      "created_at": "2025-05-30 15:06:22",
-      "updated_at": "2025-05-30 15:12:31"
-    },
-    {
-      "uuid": "9a1f83136ab642acdbe63222dd40b3db",
-      "title": "STM32",
-      "description": "",
-      "docType": "1",
-      "master": "",
-      "thumb": "/images/thumb-default.png",
-      "components": {
-        "73101b89bb3641beb1045d2b21ede147": 1,
-        "6c56ae3a5e204f0c91aa0a43ca5a6ac9": 1,
-        "2d2f3fe1ae1f44b29381afa8a5d55da6": 1,
-        "e6eabbf39254400eb686288e8056c09c": 1,
-        "419339f7b5d040bbbd59ebf7709d57ce": 1,
-        "a53e016d4c674a70a5ef5bd19b245957": 1
-      },
-      "BOM": [
-        [
-          "Value",
-          "Quantity",
-          "Package",
-          "Components",
-          "CustomPara"
-        ],
-        [
-          "SN74LVC8T245",
-          6,
-          "DIP24L_BREAKOUT",
-          "ADDRESS_1,ADDRESS_2,ADDRESS_3,CTRL_IN,DATA_1,DATA_2",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": ""
-          }
-        ],
-        [
-          "100nF",
-          2,
-          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C1,C2",
-          {
-            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
-            "Manufacturer": "Dersonic(德尔创)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C254085"
-          }
-        ],
-        [
-          "10uF",
-          2,
-          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C3,C4",
-          {
-            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
-            "Manufacturer": "Dersonic(德尔创)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C254085"
-          }
-        ],
-        [
-          "HE10-16",
-          1,
-          "HE10-16",
-          "CN1",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": ""
-          }
-        ],
-        [
-          "HE10-14",
-          1,
-          "PB_PCB_CN_HE10-14",
-          "CN2",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": ""
-          }
-        ],
-        [
-          "GENESIS-EDGE-Cart_FeRAM",
-          1,
-          "GENESIS-EDGE",
-          "CON1",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": ""
-          }
-        ],
-        [
-          "SN74HCT125N",
-          1,
-          "PDIP-14_L19.3-W6.4-P2.54-LS7.6-BL",
-          "CTRL_OUT",
-          {
-            "Manufacturer Part": "SN74HCT125N",
-            "Manufacturer": "TI(德州仪器)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C154102"
-          }
-        ],
-        [
-          "1N5819-TP",
-          1,
-          "DO-41_BD2.4-L4.7-P8.70-D0.9-FD",
-          "D1",
-          {
-            "Manufacturer Part": "1N5819-TP",
-            "Manufacturer": "null",
-            "Supplier": "LCSC",
-            "Supplier Part": "C725292"
-          }
-        ],
-        [
-          "Jumper",
-          3,
-          "HDR-TH_3P-P2.54-V-M-1",
-          "J1,J2,J3",
-          {
-            "Manufacturer Part": "NONE",
-            "Manufacturer": "NONE",
-            "Supplier": "",
-            "Supplier Part": "NONE"
-          }
-        ],
-        [
-          "LED 3MM",
-          1,
-          "LED_LED3MM",
-          "LED1",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": ""
-          }
-        ],
-        [
-          "2.45MM_1*2_PIN",
-          1,
-          "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X11_P_2.54MM",
-          "P1",
-          {
-            "Manufacturer Part": "Female headerHDR1X8-2.54",
-            "Manufacturer": "BOOMELE",
-            "Supplier": "LCSC",
-            "Supplier Part": "C27438"
-          }
-        ],
-        [
-          "IRF9540NPBF-JSM",
-          1,
-          "TO-220-3_L10.2-W4.6-P2.54-L",
-          "Q1",
-          {
-            "Manufacturer Part": "IRF9540NPBF-JSM",
-            "Manufacturer": "JSMSEMI(杰盛微)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C18187958"
-          }
-        ],
-        [
-          "2N3904L-T92-B",
-          1,
-          "TO-92-3_L4.8-W3.7-P2.54-L",
-          "Q2",
-          {
-            "Manufacturer Part": "2N3904L-T92-B",
-            "Manufacturer": "UTC(友顺)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C94133"
-          }
-        ],
-        [
-          "10kΩ",
-          3,
-          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
-          "R1,R2,R3",
-          {
-            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
-            "Manufacturer": "CCO(千志电子)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C120104"
-          }
-        ],
-        [
-          "330Ω",
-          1,
-          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
-          "R4",
-          {
-            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
-            "Manufacturer": "CCO(千志电子)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C120104"
-          }
-        ],
-        [
-          "2.2kΩ",
-          1,
-          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
-          "R5",
-          {
-            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
-            "Manufacturer": "CCO(千志电子)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C120104"
-          }
-        ],
-        [
-          "ESP101",
-          1,
-          "ESP1010",
-          "SW1",
-          {
-            "Manufacturer Part": "SSSS811101",
-            "Manufacturer": "ALPS",
-            "Supplier": "LCSC",
-            "Supplier Part": "C109335"
-          }
-        ],
-        [
-          "STM32F407 DIYMORE BOARD",
-          1,
-          "DIYMORE STM32",
-          "U1",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": ""
-          }
-        ],
-        [
-          "LF33CV",
-          1,
-          "TO-220-3_L10.2-W4.5-P2.54-L",
-          "U2",
-          {
-            "Manufacturer Part": "LF33CV",
-            "Manufacturer": "ST(意法半导体)",
-            "Supplier": "LCSC",
-            "Supplier Part": "C2832779"
-          }
-        ],
-        [
-          "LED PANEL",
-          1,
-          "PINHEADER1X4N",
-          "U4",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": "undefined"
-          }
-        ],
-        [
-          "SDCARD_READER",
-          1,
-          "PINHEADER1X6N",
-          "U5",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": ""
-          }
-        ],
-        [
-          "UART",
-          1,
-          "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X3",
-          "U7",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": ""
-          }
-        ]
-      ],
-      "updateTime": 1748793725,
+      "updateTime": 1748851030,
       "createTime": 1748610509,
       "histories": [],
       "created_at": "2025-05-30 15:08:29",
-      "updated_at": "2025-06-01 18:02:05"
+      "updated_at": "2025-06-02 09:57:10"
     },
     {
       "uuid": "cab9744d38e2a5993585fed25a2c5c49",
@@ -925,9 +950,9 @@
         ],
         [
           "Jumper",
-          3,
+          2,
           "HDR-TH_3P-P2.54-V-M-1",
-          "J1,J2,J3",
+          "J2,J3",
           {
             "Manufacturer Part": "NONE",
             "Manufacturer": "NONE",
@@ -957,6 +982,18 @@
             "Manufacturer": "BOOMELE",
             "Supplier": "LCSC",
             "Supplier Part": "C27438"
+          }
+        ],
+        [
+          "PINH2X3",
+          1,
+          "PINHEADER_2X3",
+          "PH1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
           }
         ],
         [
@@ -1092,11 +1129,334 @@
           }
         ]
       ],
-      "updateTime": 1748843477,
+      "updateTime": 1748851030,
       "createTime": 1748612796,
       "histories": [],
       "created_at": "2025-05-30 15:46:36",
-      "updated_at": "2025-06-02 07:51:17"
+      "updated_at": "2025-06-02 09:57:10"
+    },
+    {
+      "uuid": "79dc84b7981680c3c78460358a2575ee",
+      "puuid": "01a4fdc889f92109090ee8eb7d7e8bfe",
+      "title": "PCB_Mega SD v2",
+      "filename": "PCB_Mega SD v2.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "c9c6893ec9c64e77ae878222b7a651db": 6,
+        "e5f18ad4cbd640f19e982a56bf9df16b": 17,
+        "e6f218d2f1274428b59dae74c5949143": 1,
+        "1960fcc8a36c4dc294974f84cf459da4": 1,
+        "ad387569fa06424baf9f9a0d9e8df31e": 1,
+        "0e8bc615dcc442fdbf2d6252ddb67f56": 1,
+        "f9b6c4acbda64b569861a21e133c291c": 1,
+        "7ec9701378104ab0896fc8f746af35b3": 2,
+        "308f4255ccf94b899f21ce671da619e5": 1,
+        "6c74388789ee4545a72496861325d86c": 1,
+        "c6f62fc6b1e448a78a63450b82e4b83d": 1,
+        "619489e674074de888fe8dd8f6b9799e": 1,
+        "9ea59130ae074fa3abe27de8cbf71d91": 5,
+        "135965312b5144a488509080dab1d2e5": 1,
+        "718d68976b0d4a2586056a5f15902cb1": 1,
+        "1d17fb957a704dd4b47035b0f10d4493": 1,
+        "82f5897e282c46ed83dd0855ab5a852b": 1,
+        "d9967298756049c08e84852aa7d1cdf7": 1,
+        "f1d901fcc5204ccf8fb2abe75e351f3f": 1,
+        "f5f2eec9ceb0464b8d58af6691f679c8": 1,
+        "6c23252d9a544a3ea62f277397e1ec66": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "SN74LVC8T245",
+          6,
+          "DIP24L_BREAKOUT",
+          "ADDRESS_1,ADDRESS_2,ADDRESS_3,CTRL_IN,DATA_1,DATA_2",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "100nF",
+          15,
+          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
+          "C1,C2,C5,C6,C7,C8,C9,C10,C11,C12,C13,C14,C15,C16,C17",
+          {
+            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
+            "Manufacturer": "Dersonic(德尔创)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C254085"
+          }
+        ],
+        [
+          "10uF",
+          2,
+          "CAP-TH_L5.0-W2.5-P5.00-D1.0",
+          "C3,C4",
+          {
+            "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
+            "Manufacturer": "Dersonic(德尔创)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C254085"
+          }
+        ],
+        [
+          "HE10-16",
+          1,
+          "HE10-16",
+          "CN1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "HE10-14",
+          1,
+          "PB_PCB_CN_HE10-14",
+          "CN2",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "GENESIS-EDGE-Cart_FeRAM",
+          1,
+          "GENESIS-EDGE",
+          "CON1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "SN74HCT125N",
+          1,
+          "PDIP-14_L19.3-W6.4-P2.54-LS7.6-BL",
+          "CTRL_OUT",
+          {
+            "Manufacturer Part": "SN74HCT125N",
+            "Manufacturer": "TI(德州仪器)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C154102"
+          }
+        ],
+        [
+          "1N5819-TP",
+          1,
+          "DO-41_BD2.4-L4.7-P8.70-D0.9-FD",
+          "D1",
+          {
+            "Manufacturer Part": "1N5819-TP",
+            "Manufacturer": "null",
+            "Supplier": "LCSC",
+            "Supplier Part": "C725292"
+          }
+        ],
+        [
+          "Jumper",
+          2,
+          "HDR-TH_3P-P2.54-V-M-1",
+          "J2,J3",
+          {
+            "Manufacturer Part": "NONE",
+            "Manufacturer": "NONE",
+            "Supplier": "",
+            "Supplier Part": "NONE"
+          }
+        ],
+        [
+          "LED 3MM",
+          1,
+          "LED_LED3MM",
+          "LED1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "2.45MM_1*2_PIN",
+          1,
+          "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X11_P_2.54MM",
+          "P1",
+          {
+            "Manufacturer Part": "Female headerHDR1X8-2.54",
+            "Manufacturer": "BOOMELE",
+            "Supplier": "LCSC",
+            "Supplier Part": "C27438"
+          }
+        ],
+        [
+          "PINH2X3",
+          1,
+          "PINHEADER_2X3",
+          "PH1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "IRF9540NPBF-JSM",
+          1,
+          "TO-220-3_L10.2-W4.6-P2.54-L",
+          "Q1",
+          {
+            "Manufacturer Part": "IRF9540NPBF-JSM",
+            "Manufacturer": "JSMSEMI(杰盛微)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C18187958"
+          }
+        ],
+        [
+          "2N3904L-T92-B",
+          1,
+          "TO-92-3_L4.8-W3.7-P2.54-L",
+          "Q2",
+          {
+            "Manufacturer Part": "2N3904L-T92-B",
+            "Manufacturer": "UTC(友顺)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C94133"
+          }
+        ],
+        [
+          "10kΩ",
+          3,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R1,R2,R3",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "330Ω",
+          1,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R4",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "2.2kΩ",
+          1,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R5",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "ESP101",
+          1,
+          "ESP1010",
+          "SW1",
+          {
+            "Manufacturer Part": "SSSS811101",
+            "Manufacturer": "ALPS",
+            "Supplier": "LCSC",
+            "Supplier Part": "C109335"
+          }
+        ],
+        [
+          "STM32F407 DIYMORE BOARD",
+          1,
+          "DIYMORE STM32",
+          "U1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "LF33CV",
+          1,
+          "TO-220-3_L10.2-W4.5-P2.54-L",
+          "U2",
+          {
+            "Manufacturer Part": "LF33CV",
+            "Manufacturer": "ST(意法半导体)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C2832779"
+          }
+        ],
+        [
+          "LED PANEL",
+          1,
+          "PINHEADER1X4N",
+          "U4",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": "undefined"
+          }
+        ],
+        [
+          "SDCARD_READER",
+          1,
+          "PINHEADER1X6N",
+          "U5",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "UART",
+          1,
+          "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X3",
+          "U7",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ]
+      ],
+      "updateTime": 1748855871,
+      "createTime": 1748855849,
+      "histories": [],
+      "created_at": "2025-06-02 11:17:29",
+      "updated_at": "2025-06-02 11:17:51"
     }
   ],
   "sort": [
@@ -1108,5 +1468,5 @@
   "title": "Mega SD v2",
   "foldername": "Mega SD v2",
   "schfilename": "Mega SD v2.json",
-  "schfilemtime": 1748850011325
+  "schfilemtime": 1748862238733
 }
