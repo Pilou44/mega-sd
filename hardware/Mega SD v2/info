@@ -4,7 +4,7 @@
   "name": "Mega SD v2",
   "content": "",
   "created_at": "2025-05-30 13:28:58",
-  "updated_at": "2025-06-02 07:51:17",
+  "updated_at": "2025-06-02 09:40:11",
   "stick": "",
   "documents": [
     {
@@ -22,7 +22,8 @@
         "7cf48778562b448cb1596ee904fd2522": 1,
         "c8920d8ff2a8477796e7660bdbba4bf7": 1,
         "ff6c91a15fb44bbc97accf7419a48028": 4,
-        "a53e016d4c674a70a5ef5bd19b245957": 2
+        "a53e016d4c674a70a5ef5bd19b245957": 1,
+        "f514c4d400f04674baf6f14e62543617": 1
       },
       "BOM": [
         [
@@ -33,10 +34,22 @@
           "CustomPara"
         ],
         [
+          "SN74LVC8T245",
+          6,
+          "DIP24L_BREAKOUT",
+          "ADDRESS_1,ADDRESS_2,ADDRESS_3,CTRL_IN,DATA_1,DATA_2",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
           "100nF",
-          2,
+          15,
           "CAP-TH_L5.0-W2.5-P5.00-D1.0",
-          "C1,C2",
+          "C1,C2,C5,C6,C7,C8,C9,C10,C11,C12,C13,C14,C15,C16,C17",
           {
             "Manufacturer Part": "CC1H104MC1FD3F6C10MF",
             "Manufacturer": "Dersonic(德尔创)",
@@ -57,6 +70,54 @@
           }
         ],
         [
+          "HE10-16",
+          1,
+          "HE10-16",
+          "CN1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "HE10-14",
+          1,
+          "PB_PCB_CN_HE10-14",
+          "CN2",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "GENESIS-EDGE-Cart_FeRAM",
+          1,
+          "GENESIS-EDGE",
+          "CON1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "SN74HCT125N",
+          1,
+          "PDIP-14_L19.3-W6.4-P2.54-LS7.6-BL",
+          "CTRL_OUT",
+          {
+            "Manufacturer Part": "SN74HCT125N",
+            "Manufacturer": "TI(德州仪器)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C154102"
+          }
+        ],
+        [
           "1N5819-TP",
           1,
           "DO-41_BD2.4-L4.7-P8.70-D0.9-FD",
@@ -72,12 +133,24 @@
           "Jumper",
           2,
           "HDR-TH_3P-P2.54-V-M-1",
-          "J1,J2",
+          "J2,J3",
           {
             "Manufacturer Part": "NONE",
             "Manufacturer": "NONE",
             "Supplier": "",
             "Supplier Part": "NONE"
+          }
+        ],
+        [
+          "LED 3MM",
+          1,
+          "LED_LED3MM",
+          "LED1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
           }
         ],
         [
@@ -90,6 +163,18 @@
             "Manufacturer": "BOOMELE",
             "Supplier": "LCSC",
             "Supplier Part": "C27438"
+          }
+        ],
+        [
+          "PINH2X3",
+          1,
+          "PINHEADER_2X3",
+          "PH1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
           }
         ],
         [
@@ -118,14 +203,62 @@
         ],
         [
           "10kΩ",
-          2,
+          3,
           "RES-TH_BD2.3-L6.5-P10.50-D0.5",
-          "R1,R2",
+          "R1,R2,R3",
           {
             "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
             "Manufacturer": "CCO(千志电子)",
             "Supplier": "LCSC",
             "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "330Ω",
+          1,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R4",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "2.2kΩ",
+          1,
+          "RES-TH_BD2.3-L6.5-P10.50-D0.5",
+          "R5",
+          {
+            "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
+            "Manufacturer": "CCO(千志电子)",
+            "Supplier": "LCSC",
+            "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "ESP101",
+          1,
+          "ESP1010",
+          "SW1",
+          {
+            "Manufacturer Part": "SSSS811101",
+            "Manufacturer": "ALPS",
+            "Supplier": "LCSC",
+            "Supplier Part": "C109335"
+          }
+        ],
+        [
+          "STM32F407 DIYMORE BOARD",
+          1,
+          "DIYMORE STM32",
+          "U1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
           }
         ],
         [
@@ -139,13 +272,49 @@
             "Supplier": "LCSC",
             "Supplier Part": "C2832779"
           }
+        ],
+        [
+          "LED PANEL",
+          1,
+          "PINHEADER1X4N",
+          "U4",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": "undefined"
+          }
+        ],
+        [
+          "SDCARD_READER",
+          1,
+          "PINHEADER1X6N",
+          "U5",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
+          "UART",
+          1,
+          "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X3",
+          "U7",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
         ]
       ],
-      "updateTime": 1748608300,
+      "updateTime": 1748850011,
       "createTime": 1748604538,
       "histories": [],
       "created_at": "2025-05-30 13:28:58",
-      "updated_at": "2025-05-30 14:31:40"
+      "updated_at": "2025-06-02 09:40:11"
     },
     {
       "uuid": "0c1a7614717c2f1871abccd4ad1b1543",
@@ -939,5 +1108,5 @@
   "title": "Mega SD v2",
   "foldername": "Mega SD v2",
   "schfilename": "Mega SD v2.json",
-  "schfilemtime": 1748843478020
+  "schfilemtime": 1748850011325
 }
