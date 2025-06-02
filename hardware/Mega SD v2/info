@@ -4,7 +4,7 @@
   "name": "Mega SD v2",
   "content": "",
   "created_at": "2025-05-30 13:28:58",
-  "updated_at": "2025-06-02 15:12:00",
+  "updated_at": "2025-06-02 17:28:33",
   "stick": "",
   "documents": [
     {
@@ -644,10 +644,22 @@
           }
         ],
         [
+          "CURRENT_TEST",
+          1,
+          "DEBUG PINHEADER1X2",
+          "H1",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": "undefined"
+          }
+        ],
+        [
           "Jumper",
-          2,
+          3,
           "HDR-TH_3P-P2.54-V-M-1",
-          "J2,J3",
+          "J1,J2,J3",
           {
             "Manufacturer Part": "NONE",
             "Manufacturer": "NONE",
@@ -680,7 +692,7 @@
           }
         ],
         [
-          "PINH2X3",
+          "ALIM_SELECT",
           1,
           "PINHEADER_2X3",
           "PH1",
@@ -824,11 +836,11 @@
           }
         ]
       ],
-      "updateTime": 1748851030,
+      "updateTime": 1748878113,
       "createTime": 1748610509,
       "histories": [],
       "created_at": "2025-05-30 15:08:29",
-      "updated_at": "2025-06-02 09:57:10"
+      "updated_at": "2025-06-02 17:28:33"
     },
     {
       "uuid": "cab9744d38e2a5993585fed25a2c5c49",
@@ -1142,11 +1154,11 @@
           }
         ]
       ],
-      "updateTime": 1748869920,
+      "updateTime": 1748873849,
       "createTime": 1748612796,
       "histories": [],
       "created_at": "2025-05-30 15:46:36",
-      "updated_at": "2025-06-02 15:12:00"
+      "updated_at": "2025-06-02 16:17:29"
     },
     {
       "uuid": "79dc84b7981680c3c78460358a2575ee",
@@ -1481,5 +1493,5 @@
   "title": "Mega SD v2",
   "foldername": "Mega SD v2",
   "schfilename": "Mega SD v2.json",
-  "schfilemtime": 1748869920907
+  "schfilemtime": 1748878113156
 }
