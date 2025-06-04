@@ -1,10 +1,10 @@
 {
   "uuid": "01a4fdc889f92109090ee8eb7d7e8bfe",
-  "path": "Offline/Mega%20SD%20v2",
+  "path": "Offline/Mega SD v2",
   "name": "Mega SD v2",
   "content": "",
   "created_at": "2025-05-30 13:28:58",
-  "updated_at": "2025-06-02 17:28:33",
+  "updated_at": "2025-06-04 10:29:46",
   "stick": "",
   "documents": [
     {
@@ -533,11 +533,12 @@
       "thumb": "/images/thumb-default.png",
       "components": {
         "73101b89bb3641beb1045d2b21ede147": 1,
-        "6c56ae3a5e204f0c91aa0a43ca5a6ac9": 1,
-        "2d2f3fe1ae1f44b29381afa8a5d55da6": 1,
+        "2d2f3fe1ae1f44b29381afa8a5d55da6": 2,
         "e6eabbf39254400eb686288e8056c09c": 1,
         "419339f7b5d040bbbd59ebf7709d57ce": 1,
-        "a53e016d4c674a70a5ef5bd19b245957": 1
+        "a53e016d4c674a70a5ef5bd19b245957": 1,
+        "a8e797a6d9564eadb85b7112e2afdeef": 1,
+        "3d934d82904b4c46a63ba0283a7ea11a": 1
       },
       "BOM": [
         [
@@ -581,30 +582,6 @@
             "Manufacturer": "Dersonic(德尔创)",
             "Supplier": "LCSC",
             "Supplier Part": "C254085"
-          }
-        ],
-        [
-          "HE10-16",
-          1,
-          "HE10-16",
-          "CN1",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": ""
-          }
-        ],
-        [
-          "HE10-14",
-          1,
-          "PB_PCB_CN_HE10-14",
-          "CN2",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": ""
           }
         ],
         [
@@ -668,6 +645,18 @@
           }
         ],
         [
+          "Connector_Generic_Conn_02x07_Odd_Even",
+          1,
+          "2X07",
+          "J4",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
           "LED 3MM",
           1,
           "LED_LED3MM",
@@ -677,6 +666,18 @@
             "Manufacturer": "",
             "Supplier": "",
             "Supplier Part": ""
+          }
+        ],
+        [
+          "PINHEADER_1x4",
+          2,
+          "PINHEADER1X4N",
+          "LED_PANEL,PA_EXT",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": "undefined"
           }
         ],
         [
@@ -729,9 +730,9 @@
         ],
         [
           "10kΩ",
-          3,
+          4,
           "RES-TH_BD2.3-L6.5-P10.50-D0.5",
-          "R1,R2,R3",
+          "R1,R2,R3,R6",
           {
             "Manufacturer Part": "CF1/4W-110KΩ±5% T52",
             "Manufacturer": "CCO(千志电子)",
@@ -761,6 +762,18 @@
             "Manufacturer": "CCO(千志电子)",
             "Supplier": "LCSC",
             "Supplier Part": "C120104"
+          }
+        ],
+        [
+          "PINHEADER_1x6",
+          1,
+          "PINHEADER1X6N",
+          "SDCARD_READER",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
           }
         ],
         [
@@ -800,22 +813,10 @@
           }
         ],
         [
-          "LED PANEL",
+          "UART",
           1,
-          "PINHEADER1X4N",
-          "U4",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": "undefined"
-          }
-        ],
-        [
-          "SDCARD_READER",
-          1,
-          "PINHEADER1X6N",
-          "U5",
+          "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X3",
+          "UART",
           {
             "Manufacturer Part": "",
             "Manufacturer": "",
@@ -824,10 +825,10 @@
           }
         ],
         [
-          "UART",
+          "Conn_02x08_Odd_Even",
           1,
-          "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X3",
-          "U7",
+          "PINHEADER_2X08_P2.54MM_VERTICAL",
+          "X1",
           {
             "Manufacturer Part": "",
             "Manufacturer": "",
@@ -836,11 +837,11 @@
           }
         ]
       ],
-      "updateTime": 1748878113,
+      "updateTime": 1748961673,
       "createTime": 1748610509,
       "histories": [],
       "created_at": "2025-05-30 15:08:29",
-      "updated_at": "2025-06-02 17:28:33"
+      "updated_at": "2025-06-03 16:41:13"
     },
     {
       "uuid": "cab9744d38e2a5993585fed25a2c5c49",
@@ -853,9 +854,9 @@
         "3832b9f6594e42eda4e229559df716a4": 1,
         "5eb692365e79437989f74bd8e650252b": 6,
         "c4d6ebcdf0f74347baf2febee6020fd2": 1,
-        "61be30fd6cff40139279435a5852423a": 1,
         "ff6c91a15fb44bbc97accf7419a48028": 13,
-        "a53e016d4c674a70a5ef5bd19b245957": 1
+        "a53e016d4c674a70a5ef5bd19b245957": 1,
+        "3b5e673feae0488fad832f54b9c002ee": 1
       },
       "BOM": [
         [
@@ -906,18 +907,6 @@
           1,
           "HE10-16",
           "CN1",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": ""
-          }
-        ],
-        [
-          "HE10-14",
-          1,
-          "PB_PCB_CN_HE10-14",
-          "CN2",
           {
             "Manufacturer Part": "",
             "Manufacturer": "",
@@ -986,6 +975,18 @@
           }
         ],
         [
+          "Connector_Generic_Conn_02x07_Odd_Even",
+          1,
+          "2X07",
+          "J4",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
           "LED 3MM",
           1,
           "LED_LED3MM",
@@ -995,6 +996,18 @@
             "Manufacturer": "",
             "Supplier": "",
             "Supplier Part": ""
+          }
+        ],
+        [
+          "PINHEADER_1x4",
+          1,
+          "PINHEADER1X4N",
+          "LED_PANEL",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": "undefined"
           }
         ],
         [
@@ -1082,6 +1095,18 @@
           }
         ],
         [
+          "PINHEADER_1x6",
+          1,
+          "PINHEADER1X6N",
+          "SDCARD_READER",
+          {
+            "Manufacturer Part": "",
+            "Manufacturer": "",
+            "Supplier": "",
+            "Supplier Part": ""
+          }
+        ],
+        [
           "ESP101",
           1,
           "ESP1010",
@@ -1118,22 +1143,10 @@
           }
         ],
         [
-          "LED PANEL",
+          "UART",
           1,
-          "PINHEADER1X4N",
-          "U4",
-          {
-            "Manufacturer Part": "",
-            "Manufacturer": "",
-            "Supplier": "",
-            "Supplier Part": "undefined"
-          }
-        ],
-        [
-          "SDCARD_READER",
-          1,
-          "PINHEADER1X6N",
-          "U5",
+          "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X3",
+          "UART",
           {
             "Manufacturer Part": "",
             "Manufacturer": "",
@@ -1142,10 +1155,10 @@
           }
         ],
         [
-          "UART",
+          "Conn_02x08_Odd_Even",
           1,
-          "CONNECTOR_PINHEADER_2.54MM:PINHEADER_1X3",
-          "U7",
+          "PINHEADER_2X08_P2.54MM_VERTICAL",
+          "X1",
           {
             "Manufacturer Part": "",
             "Manufacturer": "",
@@ -1154,11 +1167,11 @@
           }
         ]
       ],
-      "updateTime": 1748873849,
+      "updateTime": 1748961312,
       "createTime": 1748612796,
       "histories": [],
       "created_at": "2025-05-30 15:46:36",
-      "updated_at": "2025-06-02 16:17:29"
+      "updated_at": "2025-06-03 16:35:12"
     },
     {
       "uuid": "79dc84b7981680c3c78460358a2575ee",
@@ -1172,25 +1185,25 @@
       "components": {
         "c9c6893ec9c64e77ae878222b7a651db": 6,
         "e5f18ad4cbd640f19e982a56bf9df16b": 17,
-        "e6f218d2f1274428b59dae74c5949143": 1,
-        "1960fcc8a36c4dc294974f84cf459da4": 1,
         "ad387569fa06424baf9f9a0d9e8df31e": 1,
         "0e8bc615dcc442fdbf2d6252ddb67f56": 1,
         "f9b6c4acbda64b569861a21e133c291c": 1,
-        "7ec9701378104ab0896fc8f746af35b3": 2,
+        "7ec9701378104ab0896fc8f746af35b3": 3,
         "308f4255ccf94b899f21ce671da619e5": 1,
         "6c74388789ee4545a72496861325d86c": 1,
         "c6f62fc6b1e448a78a63450b82e4b83d": 1,
         "619489e674074de888fe8dd8f6b9799e": 1,
-        "9ea59130ae074fa3abe27de8cbf71d91": 5,
+        "9ea59130ae074fa3abe27de8cbf71d91": 6,
         "135965312b5144a488509080dab1d2e5": 1,
         "718d68976b0d4a2586056a5f15902cb1": 1,
         "1d17fb957a704dd4b47035b0f10d4493": 1,
-        "82f5897e282c46ed83dd0855ab5a852b": 1,
+        "f5f2eec9ceb0464b8d58af6691f679c8": 1,
+        "6c23252d9a544a3ea62f277397e1ec66": 1,
         "d9967298756049c08e84852aa7d1cdf7": 1,
         "f1d901fcc5204ccf8fb2abe75e351f3f": 1,
-        "f5f2eec9ceb0464b8d58af6691f679c8": 1,
-        "6c23252d9a544a3ea62f277397e1ec66": 1
+        "82f5897e282c46ed83dd0855ab5a852b": 2,
+        "8020b3b53bfd4cfcb896831aecd37b68": 1,
+        "30f6c3aed41f43188df39cfe442cbecf": 1
       },
       "BOM": [
         [
@@ -1477,11 +1490,11 @@
           }
         ]
       ],
-      "updateTime": 1748855871,
+      "updateTime": 1749025786,
       "createTime": 1748855849,
       "histories": [],
       "created_at": "2025-06-02 11:17:29",
-      "updated_at": "2025-06-02 11:17:51"
+      "updated_at": "2025-06-04 10:29:46"
     }
   ],
   "sort": [
@@ -1493,5 +1506,5 @@
   "title": "Mega SD v2",
   "foldername": "Mega SD v2",
   "schfilename": "Mega SD v2.json",
-  "schfilemtime": 1748878113156
+  "schfilemtime": 1748961673326
 }
