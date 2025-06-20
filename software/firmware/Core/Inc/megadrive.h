@@ -8,6 +8,9 @@
 #ifndef INC_MEGADRIVE_H_
 #define INC_MEGADRIVE_H_
 
+#include <stdint.h>
+
+uint32_t readAddress(void);
 void megadrive_boot(void);
 
 #endif /* INC_MEGADRIVE_H_ */
