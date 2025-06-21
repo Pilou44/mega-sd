@@ -153,6 +153,18 @@ uint16_t get_rom_word(uint32_t addr) {
 }
 
 // Boucle principale pour interagir avec la Mega Drive
+// 1) Détecter /CEO (Chip Enable) au niveau BAS.
+// 2) Vérifier que /LWR et /UWR (Write Strobes) sont au niveau HAUT (c'est une lecture).
+// 3) Lire l'adresse (A1-A23) depuis les broches d'adresse.
+// 4) Récupérer le mot de donnée (16 bits) correspondant à cette adresse depuis la carte SD.
+// 5) Positionner DIR_Data (PA11) au niveau HAUT (direction STM32 -> MD).
+// 6) Écrire le mot de donnée sur les broches de données (Port E).
+// 7) Positionner /OE_Data (PA10) au niveau BAS (activer la sortie des buffers de données).
+// 8) Positionner /DTACK (PA1) au niveau BAS (signaler "donnée prête").
+// 9) Attendre une courte période (pour la durée de /DTACK).
+// 10) Positionner /DTACK (PA1) au niveau HAUT.
+// 11) Positionner /OE_Data (PA10) au niveau HAUT (désactiver la sortie des buffers de données).
+// 12) Attendre que /CEO remonte au niveau HAUT (fin du cycle MD)
 void main_megadrive_loop(void) {
     uint32_t access_count = 0;
     while (1) {
