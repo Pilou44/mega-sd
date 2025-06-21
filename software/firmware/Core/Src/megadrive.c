@@ -2,7 +2,7 @@
  * megadrive.c
  *
  *  Created on: May 24, 2025
- *      Author: guill
+ *      Author: Guillaume Beguin
  */
 
 #include "megadrive.h"
@@ -73,6 +73,48 @@ uint32_t readAddress(void) {
     return address;
 }
 
+void writeData(uint16_t dataWord) {
+    uint16_t portEOutputPattern = 0;
+
+    // Mapping des bits de dataWord (D00-D15) vers les broches de GPIOE
+    // selon V2_specs.md :cite[fil_vomozH7Y1lvpqA]
+    if (dataWord & 0x0001) { portEOutputPattern |= (1 << 14); } // D00 -> PE14
+    if (dataWord & 0x0002) { portEOutputPattern |= (1 << 8);  } // D01 -> PE8
+    if (dataWord & 0x0004) { portEOutputPattern |= (1 << 4);  } // D02 -> PE4
+    if (dataWord & 0x0008) { portEOutputPattern |= (1 << 3);  } // D03 -> PE3
+    if (dataWord & 0x0010) { portEOutputPattern |= (1 << 2);  } // D04 -> PE2
+    if (dataWord & 0x0020) { portEOutputPattern |= (1 << 1);  } // D05 -> PE1
+    if (dataWord & 0x0040) { portEOutputPattern |= (1 << 11); } // D06 -> PE11
+    if (dataWord & 0x0080) { portEOutputPattern |= (1 << 15); } // D07 -> PE15
+    if (dataWord & 0x0100) { portEOutputPattern |= (1 << 13); } // D08 -> PE13
+    if (dataWord & 0x0200) { portEOutputPattern |= (1 << 7);  } // D09 -> PE7
+    if (dataWord & 0x0400) { portEOutputPattern |= (1 << 5);  } // D10 -> PE5
+    if (dataWord & 0x0800) { portEOutputPattern |= (1 << 0);  } // D11 -> PE0
+    if (dataWord & 0x1000) { portEOutputPattern |= (1 << 6);  } // D12 -> PE6
+    if (dataWord & 0x2000) { portEOutputPattern |= (1 << 9);  } // D13 -> PE9
+    if (dataWord & 0x4000) { portEOutputPattern |= (1 << 10); } // D14 -> PE10
+    if (dataWord & 0x8000) { portEOutputPattern |= (1 << 12); } // D15 -> PE12
+
+    GPIOE->ODR = portEOutputPattern;
+}
+
+void enableDataBusOutput(void) {
+    // S'assurer que la direction est STM32 -> MD (si ce n'est pas déjà fait/fixe)
+    // Pour rappel, PA11 (dirData) HAUT pour STM32->MD
+    // Si PA11 est géré dynamiquement (pas le cas pour l'instant) :
+    // GPIOA->BSRR = (1UL << 11); // Set pa11 HIGH. UL pour unsigned long, bonne pratique.
+
+    // Activer les buffers de données en mettant PA10 (nOeData) à BAS (0)
+    // Pour mettre à 0 avec BSRR, on écrit dans les bits 16-31.
+    // Le bit 10 est mis à 0 en écrivant 1 sur le bit (10+16) = 26 de BSRR.
+    GPIOA->BSRR = (1UL << (10 + 16)); // Met pa10 à 0
+}
+
+void disableDataBusOutput(void) {
+    // Désactiver les buffers de données en mettant PA10 (nOeData) à HAUT (1)
+    // Pour mettre à 1 avec BSRR, on écrit dans les bits 0-15.
+    GPIOA->BSRR = (1UL << 10); // Met pa10 à 1
+}
 
 
 // Ouvre la ROM et prépare la lecture
