@@ -36,39 +36,39 @@ uint32_t readAddress(void) {
     portC_val = GPIOC->IDR;
 
     // Extraire les bits de GPIOD et les placer dans 'address'
-    if (portD_val & (1 << 10)) { address |= (1 << 0);  } // A01 (PD10)
-    if (portD_val & (1 << 12)) { address |= (1 << 1);  } // A02 (PD12)
-    if (portD_val & (1 << 14)) { address |= (1 << 2);  } // A03 (PD14)
+    if (portD_val & (1UL << 10)) { address |= (1 << 0);  } // A01 (PD10)
+    if (portD_val & (1UL << 12)) { address |= (1 << 1);  } // A02 (PD12)
+    if (portD_val & (1UL << 14)) { address |= (1 << 2);  } // A03 (PD14)
     // A04 est sur PC8
     // A05 est sur PC9
-    if (portD_val & (1 << 0))  { address |= (1 << 5);  } // A06 (PD0)
-    if (portD_val & (1 << 7))  { address |= (1 << 6);  } // A07 (PD7)
-    if (portD_val & (1 << 9))  { address |= (1 << 7);  } // A08 (PD9)
-    if (portD_val & (1 << 3))  { address |= (1 << 8);  } // A09 (PD3)
-    if (portD_val & (1 << 5))  { address |= (1 << 9);  } // A10 (PD5)
-    if (portD_val & (1 << 2))  { address |= (1 << 10); } // A11 (PD2)
-    if (portD_val & (1 << 6))  { address |= (1 << 11); } // A12 (PD6)
+    if (portD_val & (1UL << 0))  { address |= (1 << 5);  } // A06 (PD0)
+    if (portD_val & (1UL << 7))  { address |= (1 << 6);  } // A07 (PD7)
+    if (portD_val & (1UL << 9))  { address |= (1 << 7);  } // A08 (PD9)
+    if (portD_val & (1UL << 3))  { address |= (1 << 8);  } // A09 (PD3)
+    if (portD_val & (1UL << 5))  { address |= (1 << 9);  } // A10 (PD5)
+    if (portD_val & (1UL << 2))  { address |= (1 << 10); } // A11 (PD2)
+    if (portD_val & (1UL << 6))  { address |= (1 << 11); } // A12 (PD6)
     // A13 est sur PC11
     // A14 est sur PC7
-    if (portD_val & (1 << 15)) { address |= (1 << 14); } // A15 (PD15)
-    if (portD_val & (1 << 13)) { address |= (1 << 15); } // A16 (PD13)
-    if (portD_val & (1 << 11)) { address |= (1 << 16); } // A17 (PD11)
-    if (portD_val & (1 << 4))  { address |= (1 << 17); } // A18 (PD4)
-    if (portD_val & (1 << 1))  { address |= (1 << 18); } // A19 (PD1)
+    if (portD_val & (1UL << 15)) { address |= (1 << 14); } // A15 (PD15)
+    if (portD_val & (1UL << 13)) { address |= (1 << 15); } // A16 (PD13)
+    if (portD_val & (1UL << 11)) { address |= (1 << 16); } // A17 (PD11)
+    if (portD_val & (1UL << 4))  { address |= (1 << 17); } // A18 (PD4)
+    if (portD_val & (1UL << 1))  { address |= (1 << 18); } // A19 (PD1)
     // A20 est sur PC12
     // A21 est sur PC10
     // A22 est sur PC13
     // A23 est sur PC6
 
     // Extraire les bits de GPIOC et les placer dans 'address'
-    if (portC_val & (1 << 8))  { address |= (1 << 3);  } // A04 (PC8)
-    if (portC_val & (1 << 9))  { address |= (1 << 4);  } // A05 (PC9)
-    if (portC_val & (1 << 11)) { address |= (1 << 12); } // A13 (PC11)
-    if (portC_val & (1 << 7))  { address |= (1 << 13); } // A14 (PC7)
-    if (portC_val & (1 << 12)) { address |= (1 << 19); } // A20 (PC12)
-    if (portC_val & (1 << 10)) { address |= (1 << 20); } // A21 (PC10)
-    if (portC_val & (1 << 13)) { address |= (1 << 21); } // A22 (PC13)
-    if (portC_val & (1 << 6))  { address |= (1 << 22); } // A23 (PC6)
+    if (portC_val & (1UL << 8))  { address |= (1 << 3);  } // A04 (PC8)
+    if (portC_val & (1UL << 9))  { address |= (1 << 4);  } // A05 (PC9)
+    if (portC_val & (1UL << 11)) { address |= (1 << 12); } // A13 (PC11)
+    if (portC_val & (1UL << 7))  { address |= (1 << 13); } // A14 (PC7)
+    if (portC_val & (1UL << 12)) { address |= (1 << 19); } // A20 (PC12)
+    if (portC_val & (1UL << 10)) { address |= (1 << 20); } // A21 (PC10)
+    if (portC_val & (1UL << 13)) { address |= (1 << 21); } // A22 (PC13)
+    if (portC_val & (1UL << 6))  { address |= (1 << 22); } // A23 (PC6)
 
     return address;
 }
@@ -116,6 +116,32 @@ void disableDataBusOutput(void) {
     GPIOA->BSRR = (1UL << 10); // Met pa10 à 1
 }
 
+bool isChipEnableLow(void) {
+    // Lire l'état de la broche PC4.
+    // Le registre IDR (Input Data Register) de GPIOC contient l'état des broches.
+    // Si le bit 4 de GPIOC->IDR est à 0, alors PC4 est BAS.
+    if ((GPIOC->IDR & (1UL << 4)) == 0) {
+        return true; // PC4 est au niveau BAS
+    } else {
+        return false; // PC4 est au niveau HAUT
+    }
+}
+
+bool isReadCycle(void) {
+    // Lire l'état de PC0 (/UWR) et PC2 (/LWR)
+    // Rappel : ils sont actifs BAS. Pour une lecture, ils doivent être HAUT.
+
+    bool uwrIsHigh = (GPIOC->IDR & (1UL << 0)) != 0; // Vérifie si PC0 est HAUT
+    bool lwrIsHigh = (GPIOC->IDR & (1UL << 2)) != 0; // Vérifie si PC2 est HAUT
+
+    if (uwrIsHigh && lwrIsHigh) {
+        return true; // C'est un cycle de lecture (les deux sont inactifs/HAUT)
+    } else {
+        return false; // C'est un cycle d'écriture (au moins un des deux est actif/BAS)
+    }
+}
+
+
 
 // Ouvre la ROM et prépare la lecture
 int load_rom(const char *path) {
@@ -157,7 +183,7 @@ uint16_t get_rom_word(uint32_t addr) {
 // 2) Vérifier que /LWR et /UWR (Write Strobes) sont au niveau HAUT (c'est une lecture).
 // 3) Lire l'adresse (A1-A23) depuis les broches d'adresse.
 // 4) Récupérer le mot de donnée (16 bits) correspondant à cette adresse depuis la carte SD.
-// 5) Positionner DIR_Data (PA11) au niveau HAUT (direction STM32 -> MD).
+// 5) Positionner DIR_Data (PA11) au niveau HAUT (direction STM32 -> MD). --> Inutile pour le moment, on ne fait que de la lecture. On peut laisser PA11 au niveau haut en permanence
 // 6) Écrire le mot de donnée sur les broches de données (Port E).
 // 7) Positionner /OE_Data (PA10) au niveau BAS (activer la sortie des buffers de données).
 // 8) Positionner /DTACK (PA1) au niveau BAS (signaler "donnée prête").
