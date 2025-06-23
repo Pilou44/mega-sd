@@ -114,7 +114,8 @@ int main(void)
   }
 
   boot();
-  mainMegadriveLoop();
+//  mainMegadriveLoop();
+
 //  list_sd_root();
 //  test_read_file("test.txt");
 //  test_read_file("roms/Sonic The Hedgehog 2 (World).md");
