@@ -98,6 +98,18 @@ void writeData(uint16_t dataWord) {
     GPIOE->ODR = portEOutputPattern;
 }
 
+void assertDtack(void) {
+    // Signaler à la MD que les données sont prêtes (PA1 BAS)
+    // Le bit 1 est mis à 0 en écrivant 1 sur le bit (1+16) = 17 de BSRR.
+    GPIOA->BSRR = (1UL << (1 + 16)); // Met pa1 à 0
+}
+
+void deassertDtack(void) {
+    // Désactiver les buffers de données en mettant PA1 (nOeData) à HAUT (1)
+    // Pour mettre à 1 avec BSRR, on écrit dans les bits 0-15.
+    GPIOA->BSRR = (1UL << 1); // Met pa1 à 1
+}
+
 void enableDataBusOutput(void) {
     // S'assurer que la direction est STM32 -> MD (si ce n'est pas déjà fait/fixe)
     // Pour rappel, PA11 (dirData) HAUT pour STM32->MD

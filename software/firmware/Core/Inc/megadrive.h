@@ -17,6 +17,8 @@ void enableDataBusOutput(void);
 void disableDataBusOutput(void);
 bool isChipEnableLow(void);
 bool isReadCycle(void);
+void assertDtack(void);
+void deassertDtack(void);
 
 
 void megadrive_boot(void);
