@@ -14,7 +14,7 @@ int __io_putchar(int ch) {
     return ch;
 }
 
-void log_uart(const char *format, ...) {
+void logUart(const char *format, ...) {
     char buffer[128];
     va_list args;
     va_start(args, format);

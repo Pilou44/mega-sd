@@ -109,7 +109,7 @@ int main(void)
 
   FRESULT result = f_mount(&fs, "", 1);
   if (result != FR_OK) {
-      log_uart("Mount failed: %d", result);
+      logUart("Mount failed: %d", result);
       while(1); // Stoppe tout
   }
 
@@ -190,54 +190,54 @@ void test_read_file(const char *filename) {
     uint32_t t0 = HAL_GetTick();
 
     // Ouvre le fichier (remplace le nom par celui de ta ROM)
-    log_uart("Ouverture de %s", filename);
+    logUart("Ouverture de %s", filename);
     res = f_open(&file, filename, FA_READ);
     if (res != FR_OK) {
-        log_uart("Open error: %d", res);
+        logUart("Open error: %d", res);
         return;
     }
 
-    log_uart("Taille attendue FatFS = %lu", f_size(&file));
+    logUart("Taille attendue FatFS = %lu", f_size(&file));
 
-    log_uart("Taille du buffer %d", sizeof(buffer));
+    logUart("Taille du buffer %d", sizeof(buffer));
 
     do {
         res = f_read(&file, buffer, sizeof(buffer), &br);
         total += br;
-//        log_uart("Lu %ld octets (res=%d, br=%d)", total, res, br);
+//        logUart("Lu %ld octets (res=%d, br=%d)", total, res, br);
         if (res != FR_OK) {
-        	log_uart("Read error (%s): %d", filename, res);
+            logUart("Read error (%s): %d", filename, res);
             break;
         }
     } while (br == sizeof(buffer));
 
     f_close(&file);
-    log_uart("Lecture terminee (%s): %ld octets lus en %ld ms", filename, total, HAL_GetTick() - t0);
+    logUart("Lecture terminee (%s): %ld octets lus en %ld ms", filename, total, HAL_GetTick() - t0);
 }
 
 void list_sd_root(void) {
     // Monte la SD
 	FRESULT result = f_mount(&fs, "", 1);
     if (result == FR_OK) {
-        log_uart("SD mounted");
+        logUart("SD mounted");
     } else {
-        log_uart("Mount failed: %d", result);
+        logUart("Mount failed: %d", result);
         return;
     }
 
     // Ouvre le répertoire racine
     res = f_opendir(&dir, "/");
     if (res == FR_OK) {
-        log_uart("Root dir opened");
+        logUart("Root dir opened");
         while (1) {
             res = f_readdir(&dir, &fno);
             if (res != FR_OK || fno.fname[0] == 0) break;
             // Affiche le nom du fichier ou du dossier
-            log_uart("%s", fno.fname);
+            logUart("%s", fno.fname);
         }
         f_closedir(&dir);
     } else {
-        log_uart("Open root failed");
+        logUart("Open root failed");
     }
 }
 /* USER CODE END 4 */

@@ -138,8 +138,8 @@ static bool SD_RxDataBlock(BYTE *buff, UINT len)
 	if (HAL_SPI_TransmitReceive(HSPI_SDCARD, buff, buff, (uint16_t)len, SD_BLOCK_RX_TIMEOUT) != HAL_OK) {
 		// Une erreur s'est produite pendant le transfert SPI du bloc.
 		// Tu peux ajouter un log ici si tu en as un.
-		// log_uart("HAL_SPI_TransmitReceive error in SD_RxDataBlock");
-		log_uart("Error reading SD card");
+		// logUart("HAL_SPI_TransmitReceive error in SD_RxDataBlock");
+		logUart("Error reading SD card");
 		return FALSE; // Indique une erreur de lecture du bloc
 	}
 
@@ -248,17 +248,17 @@ DSTATUS SD_disk_initialize(BYTE drv)
 	if(Stat & STA_NODISK) return Stat;
 
 	if (HAL_SPI_DeInit(HSPI_SDCARD) != HAL_OK) {
-	    log_uart("HAL_SPI_DeInit (low speed) failed");
+		logUart("HAL_SPI_DeInit (low speed) failed");
 	    SD_PowerOff();
 	    return STA_NOINIT;
 	}
 	hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256; // Pour <= 400kHz
 	if (HAL_SPI_Init(HSPI_SDCARD) != HAL_OK) {
-		log_uart("HAL_SPI_Init (low speed) failed");
+		logUart("HAL_SPI_Init (low speed) failed");
 		SD_PowerOff();
 		return STA_NOINIT;
 	}
-    log_uart("SPI Set to Low Speed for SD Init");
+	logUart("SPI Set to Low Speed for SD Init");
 
 	/* power on */
 	SD_PowerOn();
@@ -331,9 +331,9 @@ DSTATUS SD_disk_initialize(BYTE drv)
 	/* Clear STA_NOINIT */
 	if (type)
 	{
-		log_uart("SD Init Success, CardType: 0x%02X", CardType);
+		logUart("SD Init Success, CardType: 0x%02X", CardType);
 		if (HAL_SPI_DeInit(HSPI_SDCARD) != HAL_OK) {
-			log_uart("HAL_SPI_DeInit (high speed) failed");
+			logUart("HAL_SPI_DeInit (high speed) failed");
 			SD_PowerOff();
 			return STA_NOINIT;
 		}
@@ -343,16 +343,16 @@ DSTATUS SD_disk_initialize(BYTE drv)
 		hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8; // <--- VITESSE DE TRAVAIL
 
 		if (HAL_SPI_Init(HSPI_SDCARD) != HAL_OK) {
-			log_uart("HAL_SPI_Init (high speed %s) failed", (hspi1.Init.BaudRatePrescaler == SPI_BAUDRATEPRESCALER_4) ? "21MHz" : "10.5MHz");
+			logUart("HAL_SPI_Init (high speed %s) failed", (hspi1.Init.BaudRatePrescaler == SPI_BAUDRATEPRESCALER_4) ? "21MHz" : "10.5MHz");
 			SD_PowerOff();
 			return STA_NOINIT;
 		}
-		log_uart("SPI Set to High Speed (%s) for Data Transfer", (hspi1.Init.BaudRatePrescaler == SPI_BAUDRATEPRESCALER_4) ? "21MHz" : "10.5MHz");
+		logUart("SPI Set to High Speed (%s) for Data Transfer", (hspi1.Init.BaudRatePrescaler == SPI_BAUDRATEPRESCALER_4) ? "21MHz" : "10.5MHz");
 		Stat &= ~STA_NOINIT; // Initialisation réussie
 	}
 	else
 	{
-		log_uart("SD Card Initialization Failed (type == 0 at the end)");
+		logUart("SD Card Initialization Failed (type == 0 at the end)");
 		/* Initialization failed */
 		SD_PowerOff();
 	}

@@ -19,8 +19,10 @@ bool isChipEnableLow(void);
 bool isReadCycle(void);
 void assertDtack(void);
 void deassertDtack(void);
+void maintainDtackFixDuration(void);
+void maintainDtackWithAS(void);
 
 
-void megadrive_boot(void);
+void boot(void);
 
 #endif /* INC_MEGADRIVE_H_ */

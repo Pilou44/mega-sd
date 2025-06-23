@@ -12,6 +12,6 @@
 #include <stdarg.h>
 #include "usart.h"
 
-void log_uart(const char *format, ...);
+void logUart(const char *format, ...);
 
 #endif /* INC_LOG_UART_H_ */

@@ -10,8 +10,8 @@
 #include "log_uart.h"
 #include <string.h>
 
-int load_rom(const char *path);
-uint16_t get_rom_word(uint32_t addr);
+int loadRom(const char *path);
+uint16_t getRomWord(uint32_t addr);
 void main_megadrive_loop(void);
 
 FIL rom_file;
@@ -105,9 +105,27 @@ void assertDtack(void) {
 }
 
 void deassertDtack(void) {
-    // Désactiver les buffers de données en mettant PA1 (nOeData) à HAUT (1)
+    // Mettre PA1 (/DTACK) au niveau HAUT (1)
     // Pour mettre à 1 avec BSRR, on écrit dans les bits 0-15.
     GPIOA->BSRR = (1UL << 1); // Met pa1 à 1
+}
+
+void maintainDtackFixDuration(void) {
+	// Délai pour l'étape 9 (environ 25 NOPs pour ~150ns @ 168MHz, à ajuster)
+	__NOP(); __NOP(); __NOP(); __NOP(); __NOP(); // 5
+	__NOP(); __NOP(); __NOP(); __NOP(); __NOP(); // 10
+	__NOP(); __NOP(); __NOP(); __NOP(); __NOP(); // 15
+	__NOP(); __NOP(); __NOP(); __NOP(); __NOP(); // 20
+	__NOP(); __NOP(); __NOP(); __NOP(); __NOP(); // 25
+}
+
+void maintainDtackWithAS(void) {
+	// Attendre que /AS (PC5) repasse à HAUT
+	while ((GPIOC->IDR & (1UL << 5)) == 0) {
+	    // Boucle tant que /AS est BAS
+	    // Attention : si /AS reste bloqué BAS pour une raison X, cette boucle est infinie.
+	    // Pour un test, c'est ok. Pour un produit, un timeout serait bien.
+	}
 }
 
 void enableDataBusOutput(void) {
@@ -139,6 +157,10 @@ bool isChipEnableLow(void) {
     }
 }
 
+bool isChipEnableHigh(void) {
+    return !isChipEnableLow();
+}
+
 bool isReadCycle(void) {
     // Lire l'état de PC0 (/UWR) et PC2 (/LWR)
     // Rappel : ils sont actifs BAS. Pour une lecture, ils doivent être HAUT.
@@ -156,11 +178,11 @@ bool isReadCycle(void) {
 
 
 // Ouvre la ROM et prépare la lecture
-int load_rom(const char *path) {
+int loadRom(const char *path) {
     FRESULT res;
     res = f_open(&rom_file, path, FA_READ);
     if (res != FR_OK) {
-        log_uart("Erreur ouverture ROM: %d", res);
+        logUart("Erreur ouverture ROM: %d", res);
         return 0;
     }
     rom_size = f_size(&rom_file);
@@ -169,12 +191,12 @@ int load_rom(const char *path) {
     UINT br;
     res = f_read(&rom_file, rom_buffer, ROM_BUFFER_SIZE, &br);
     buffer_addr_start = 0;
-    log_uart("ROM chargee, taille = %lu octets", rom_size);
+    logUart("ROM chargee, taille = %lu octets", rom_size);
     return 1;
 }
 
 // Fonction pour fournir le mot demandé par la Mega Drive
-uint16_t get_rom_word(uint32_t addr) {
+uint16_t getRomWord(uint32_t addr) {
     // Limite à la taille de la ROM
     if (addr > rom_size - 2) return 0xFFFF;
 
@@ -214,12 +236,12 @@ void main_megadrive_loop(void) {
             // Sur port d'extension, A0 est toujours 0, donc addr doit être pair
             addr &= ~1;
 
-            uint16_t data = get_rom_word(addr);
+            uint16_t data = getRomWord(addr);
             // Place la donnée sur le bus data (port D)
             GPIOD->ODR = data;
 
             if (++access_count % 10000 == 0) {
-                log_uart("Acces Mega Drive #%lu, addr=0x%06lX", access_count, addr);
+                logUart("Acces Mega Drive #%lu, addr=0x%06lX", access_count, addr);
             }
 
             // (Optionnel) Attendre la fin du cycle /ROM ou synchroniser le timing
@@ -228,14 +250,14 @@ void main_megadrive_loop(void) {
     }
 }
 
-void megadrive_boot(void) {
+void boot(void) {
 	// 1. Ouvre la ROM
-	if (!load_rom("boot/Sonic.md")) {
-		log_uart("Echec ouverture ROM boot/Sonic.md");
+	if (!loadRom("boot/Sonic.md")) {
+		logUart("Echec ouverture ROM boot/Sonic.md");
 		while(1); // Stoppe tout si erreur
 	}
 
-	log_uart("En attente Mega Drive...");
+	logUart("En attente Mega Drive...");
 
 	// 2. Boucle principale, scrute /ROM
 	main_megadrive_loop();
