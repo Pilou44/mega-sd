@@ -16,6 +16,10 @@ static volatile DSTATUS Stat = STA_NOINIT;	/* Disk Status */
 static uint8_t CardType;                    /* Type 0:MMC, 1:SDC, 2:Block addressing */
 static uint8_t PowerFlag = 0;				/* Power flag */
 
+// Flag pour la synchronisation DMA
+volatile HAL_StatusTypeDef spiDmaTransferStatus = HAL_OK; // Pour stocker le statut du transfert DMA
+volatile bool spiDmaTransferComplete = false;         // Mis à true par les callbacks DMA
+
 /***************************************
  * SPI functions
  **************************************/
@@ -122,69 +126,80 @@ static uint8_t SD_CheckPower(void)
 }
 
 /* receive data block */
-static bool SD_RxDataBlock(BYTE *buff, UINT len)
+static bool SD_RxDataBlock(BYTE *buff, UINT len) // len est 512
 {
     uint8_t token;
+    HAL_StatusTypeDef dma_status_check; // Pour vérifier le statut de lancement du DMA
 
-    /* timeout 200ms */
-    Timer1 = 200;
-
-    /* loop until receive a response or timeout */
-    uint32_t loop_count = 0; // Pour voir combien de fois on boucle
-    bool processed_suspicious_byte = false;
+    /* 1. Attente du Start Token (0xFE) - Inchangé */
+    Timer1 = 200; // Timeout de 200ms pour le token
+    uint32_t loop_count = 0;
     do {
-        token = SPI_RxByte(); // Appel à ta fonction SPI_RxByte qui logue les erreurs HAL
-        loop_count++;
-
-        if (!processed_suspicious_byte && loop_count == 75 && token == 0x00) {
-            logUart("SD_RxDataBlock: Suspicious 0x00 at iter 75! Reading next byte immediately.");
-            token = SPI_RxByte(); // Lis l'octet suivant
-            loop_count++; // Compte cette lecture supplémentaire
-            logUart("SD_RxDataBlock: Byte after suspicious 0x00 is 0x%02X", token);
-            processed_suspicious_byte = true; // Marque qu'on a traité ce cas
-            // La boucle va maintenant évaluer ce nouveau 'token'
-        }
-
-        if (token != 0xFF && !processed_suspicious_byte) { // Évite de re-logger le 0x00 si on l'a traité
+        token = SPI_RxByte(); // Utilise ta fonction SPI_RxByte existante (qui logue ses propres erreurs HAL si besoin)
+        if (token != 0xFF) {
             logUart("SD_RxDataBlock: Token candidate: 0x%02X (iter: %lu, T1: %lu)", token, loop_count, Timer1);
         }
+        loop_count++;
+    } while((token == 0xFF) && Timer1);
 
-    } while((token == 0xFF) && Timer1 && !processed_suspicious_byte);
-
-    /* invalid response */
     if(token != 0xFE) {
         logUart("SD_RxDataBlock: Echec Start Token! Final Token: 0x%02X (iter: %lu, T1: %lu)", token, loop_count, Timer1);
         return FALSE;
     }
+    // Si on est ici, le token 0xFE a été reçu.
     logUart("SD_RxDataBlock: Start Token 0xFE OK! (iter: %lu, T1: %lu)", loop_count, Timer1);
 
-    /* receive data */
-    // OPTIMISATION ICI: Recevoir le bloc de données en une fois
-    // Définit un timeout approprié pour la lecture d'un bloc entier.
-    // Tu peux ajuster cette valeur si nécessaire. 100ms est un point de départ.
-#define SD_BLOCK_RX_TIMEOUT 100
+    /* 2. Réception du bloc de données de 'len' (512) octets en utilisant DMA */
+    spiDmaTransferComplete = false; // Réinitialise le flag avant de lancer le DMA
+    spiDmaTransferStatus = HAL_BUSY;  // État initial en attente
 
-    // Astuce courante : remplir le buffer de réception (buff) avec des octets 0xFF.
-    // Ces 0xFF seront envoyés sur la ligne MOSI pour générer les clocks SPI
-    // pendant que les données réelles de la carte SD sont lues sur la ligne MISO et stockées dans buff.
-    memset(buff, 0xFF, len);
+    // Pour recevoir des données, on doit aussi envoyer des octets "dummy" (0xFF).
+    // Remplis ton buffer 'buff' avec 0xFF s'il ne l'est pas déjà, car 'buff' sera utilisé pour TX et RX.
+    // Ou utilise un buffer TX séparé rempli de 0xFF si 'buff' ne doit pas être modifié avant réception.
+    // Pour HAL_SPI_TransmitReceive_DMA, pTxData et pRxData peuvent pointer vers le même buffer.
+    memset(buff, 0xFF, len); // Prépare les octets dummy à envoyer
 
-    // Utilise HAL_SPI_TransmitReceive pour envoyer les 0xFF et recevoir les données du bloc.
-    HAL_StatusTypeDef spi_status; // Pour stocker le statut de la fonction HAL
-    spi_status = HAL_SPI_TransmitReceive(HSPI_SDCARD, buff, buff, (uint16_t)len, SD_BLOCK_RX_TIMEOUT);
+    // Lance le transfert SPI en mode DMA
+    // Assure-toi que HSPI_SDCARD est bien ton handle SPI (ex: &hspi1)
+    dma_status_check = HAL_SPI_TransmitReceive_DMA(HSPI_SDCARD, buff, buff, (uint16_t)len);
 
-    if (spi_status != HAL_OK) {
-        // Une erreur s'est produite pendant le transfert SPI du bloc.
-         logUart("SD_RxDataBlock: HAL_SPI_TransmitReceive ECHEC! Status: %d, SPI Error: 0x%lX", spi_status, hspi1.ErrorCode);
-        logUart("Error reading SD card"); // Ton log actuel
-        return FALSE; // Indique une erreur de lecture du bloc
+    if (dma_status_check != HAL_OK) {
+        // Le lancement du DMA a échoué (ex: DMA occupé, mauvais paramètres)
+        logUart("SD_RxDataBlock: HAL_SPI_TransmitReceive_DMA launch FAILED! Status: %d", dma_status_check);
+        // HSPI_SDCARD->ErrorCode pourrait aussi avoir des infos ici
+        return FALSE;
     }
 
-    /* discard CRC */
-    SPI_RxByte();
+    logUart("SD_RxDataBlock: DMA Transfer for %u bytes started...", len);
+
+    // Attente de la fin du transfert DMA (avec un timeout)
+    // Timer1 peut être réutilisé ou un nouveau timer/compteur peut être utilisé.
+    // Disons un timeout de 100ms pour le transfert DMA du bloc.
+    Timer1 = 100; // Timeout de 100ms pour le transfert DMA
+    while (!spiDmaTransferComplete && Timer1) {
+        // Attente active. Dans un système plus complexe, on pourrait passer à une autre tâche.
+        // Assure-toi que Timer1 est bien décrémenté par ton ISR SysTick.
+    }
+
+    if (!spiDmaTransferComplete) { // Timeout DMA
+        logUart("SD_RxDataBlock: DMA Transfer TIMEOUT! (Timer1 expired)");
+        // Il faut essayer d'avorter le transfert DMA en cours
+        HAL_SPI_DMAStop(HSPI_SDCARD);
+        return FALSE;
+    }
+
+    if (spiDmaTransferStatus != HAL_OK) { // Erreur reportée par le callback DMA/SPI
+        logUart("SD_RxDataBlock: DMA Transfer FAILED! Reported Status: %d, SPI Error: 0x%lX", spiDmaTransferStatus, HSPI_SDCARD.ErrorCode);
+        return FALSE;
+    }
+
+    logUart("SD_RxDataBlock: DMA Transfer OK!");
+
+    /* 3. Rejeter les 2 octets de CRC - Inchangé */
+    SPI_RxByte(); // Ces appels utilisent toujours le mode polling/bloquant pour 1 octet
     SPI_RxByte();
 
-    return TRUE;
+    return TRUE; // Succès
 }
 
 /* transmit data block */
