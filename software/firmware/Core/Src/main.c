@@ -60,7 +60,8 @@ FILINFO fno;
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 void list_sd_root(void);
-void test_read_file(const char *filename);
+void test_file_transfer(const char *filename);
+void test_file_access(const char *filename);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -115,17 +116,24 @@ int main(void)
       while(1); // Stoppe tout
   }
 
-  boot();
+//  boot();
 //  mainMegadriveLoop();
 
-//  list_sd_root();
-//  test_read_file("test.txt");
-//  test_read_file("roms/Sonic The Hedgehog 2 (World).md");
-//  test_read_file("roms/Sonic2.md");
-//  test_read_file("roms/Sonic The Hedgehog (USA, Europe).md");
-//  test_read_file("roms/Sonic.md");
-//  test_read_file("roms/Columns (W) (REV01) [!].gen");
-//  test_read_file("roms/Columns.gen");
+  list_sd_root();
+  test_file_transfer("test.txt");
+  test_file_access("test.txt");
+  test_file_transfer("roms/Sonic The Hedgehog 2 (World).md");
+  test_file_access("roms/Sonic The Hedgehog 2 (World).md");
+  test_file_transfer("roms/Sonic2.md");
+  test_file_access("roms/Sonic2.md");
+  test_file_transfer("roms/Sonic The Hedgehog (USA, Europe).md");
+  test_file_access("roms/Sonic The Hedgehog (USA, Europe).md");
+  test_file_transfer("roms/Sonic.md");
+  test_file_access("roms/Sonic.md");
+  test_file_transfer("roms/Columns (W) (REV01) [!].gen");
+  test_file_access("roms/Columns (W) (REV01) [!].gen");
+  test_file_transfer("roms/Columns.gen");
+  test_file_access("roms/Columns.gen");
   while (1)
   {
     /* USER CODE END WHILE */
@@ -181,39 +189,110 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void test_read_file(const char *filename) {
+void test_file_transfer(const char *filename) {
     FIL file;
     FRESULT res;
     UINT br;
-//    uint8_t buffer[4096];
     uint8_t buffer[32768];
     uint32_t total = 0;
-    uint32_t t0 = HAL_GetTick();
+    uint32_t t0, t1;
 
     // Ouvre le fichier (remplace le nom par celui de ta ROM)
-    logUart("Ouverture de %s", filename);
+    logUart("Test de transfert de %s avec un buffer de %d octets", filename, sizeof(buffer));
     res = f_open(&file, filename, FA_READ);
     if (res != FR_OK) {
         logUart("Open error: %d", res);
         return;
     }
 
-    logUart("Taille attendue FatFS = %lu", f_size(&file));
+    uint32_t fileSize = f_size(&file);
+    logUart("Taille attendue FatFS = %lu", fileSize);
 
-    logUart("Taille du buffer %d", sizeof(buffer));
-
+    t0 = HAL_GetTick();
     do {
         res = f_read(&file, buffer, sizeof(buffer), &br);
         total += br;
-//        logUart("Lu %ld octets (res=%d, br=%d)", total, res, br);
         if (res != FR_OK) {
             logUart("Read error (%s): %d", filename, res);
             break;
         }
     } while (br == sizeof(buffer));
+    t1 = HAL_GetTick();
 
     f_close(&file);
-    logUart("Lecture terminee (%s): %ld octets lus en %ld ms", filename, total, HAL_GetTick() - t0);
+    logUart("Lecture terminee (%s) : %ld octets lus en %ld ms", filename, total, t1 - t0);
+    if (fileSize == total) {
+        logUart("Transfert OK");
+    } else {
+        logUart("Transfert KO !!!!!!!!");
+    }
+}
+
+void test_file_access(const char *filename) {
+    FIL file;
+    FRESULT res;
+    UINT br;
+    uint8_t buffer[32768];
+    uint32_t t0, t1;
+
+    // Ouvre le fichier (remplace le nom par celui de ta ROM)
+    logUart("Test d'accès à %s avec un buffer de %d octets", filename, sizeof(buffer));
+    res = f_open(&file, filename, FA_READ);
+    if (res != FR_OK) {
+        logUart("Open error: %d", res);
+        return;
+    }
+
+    uint32_t fileSize = f_size(&file);
+
+    t0 = HAL_GetTick();
+    res = f_lseek(&file, 0);
+    if (res != FR_OK) {
+        logUart("Lseek (debut) error: %d", res);
+        f_close(&file);
+        return;
+    }
+    res = f_read(&file, buffer, sizeof(buffer), &br);
+    if (res != FR_OK) {
+        logUart("Read (premiers ko) error: %d", res);
+        f_close(&file);
+        return;
+    }
+    if (br == 0 && fileSize > 0) { // Si on n'a rien lu alors que le fichier n'est pas vide
+        logUart("Read (premiers ko) error: 0 octet lu pour fichier non vide");
+        f_close(&file);
+        return;
+    }
+    t1 = HAL_GetTick();
+
+    logUart("Temps de lecture pour les premiers %d ko : %ld ms", sizeof(buffer), t1 - t0);
+
+    if (fileSize >= sizeof(buffer)) {
+        t0 = HAL_GetTick();
+        res = f_lseek(&file, fileSize - sizeof(buffer));
+        if (res != FR_OK) {
+            logUart("Lseek (fin) error: %d", res);
+            f_close(&file);
+            return;
+        }
+        res = f_read(&file, buffer, sizeof(buffer), &br);
+        if (res != FR_OK) {
+            logUart("Read (derniers ko) error: %d", res);
+            f_close(&file);
+            return;
+        }
+        // Pour les derniers 32Ko d'un fichier >= 32Ko, on s'attend à ce que br == sizeof(buffer)
+        if (br != sizeof(buffer)) {
+            logUart("Read (derniers ko) warning: n'a pas lu 32ko complets (lus: %u)", (unsigned int)br);
+        }
+        t1 = HAL_GetTick();
+
+        logUart("Temps de lecture pour les derniers %d ko : %ld ms", sizeof(buffer), t1 - t0);
+    } else {
+        logUart("Fichier %s trop petit (%lu octets) pour lire les derniers %u ko.", filename, fileSize, (unsigned int)(sizeof(buffer) / 1024));
+    }
+
+    f_close(&file);
 }
 
 void list_sd_root(void) {
