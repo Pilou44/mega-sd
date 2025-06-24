@@ -62,6 +62,7 @@ void SystemClock_Config(void);
 void list_sd_root(void);
 void test_file_transfer(const char *filename);
 void test_file_access(const char *filename);
+uint16_t getClusterSize(FATFS fs);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -116,24 +117,24 @@ int main(void)
       while(1); // Stoppe tout
   }
 
-//  boot();
+  boot();
 //  mainMegadriveLoop();
 
-  list_sd_root();
-  test_file_transfer("test.txt");
-  test_file_access("test.txt");
-  test_file_transfer("roms/Sonic The Hedgehog 2 (World).md");
-  test_file_access("roms/Sonic The Hedgehog 2 (World).md");
-  test_file_transfer("roms/Sonic2.md");
-  test_file_access("roms/Sonic2.md");
-  test_file_transfer("roms/Sonic The Hedgehog (USA, Europe).md");
-  test_file_access("roms/Sonic The Hedgehog (USA, Europe).md");
-  test_file_transfer("roms/Sonic.md");
-  test_file_access("roms/Sonic.md");
-  test_file_transfer("roms/Columns (W) (REV01) [!].gen");
-  test_file_access("roms/Columns (W) (REV01) [!].gen");
-  test_file_transfer("roms/Columns.gen");
-  test_file_access("roms/Columns.gen");
+//  list_sd_root();
+//  test_file_transfer("test.txt");
+//  test_file_access("test.txt");
+//  test_file_transfer("roms/Sonic The Hedgehog 2 (World).md");
+//  test_file_access("roms/Sonic The Hedgehog 2 (World).md");
+//  test_file_transfer("roms/Sonic2.md");
+//  test_file_access("roms/Sonic2.md");
+//  test_file_transfer("roms/Sonic The Hedgehog (USA, Europe).md");
+//  test_file_access("roms/Sonic The Hedgehog (USA, Europe).md");
+//  test_file_transfer("roms/Sonic.md");
+//  test_file_access("roms/Sonic.md");
+//  test_file_transfer("roms/Columns (W) (REV01) [!].gen");
+//  test_file_access("roms/Columns (W) (REV01) [!].gen");
+//  test_file_transfer("roms/Columns.gen");
+//  test_file_access("roms/Columns.gen");
   while (1)
   {
     /* USER CODE END WHILE */
@@ -188,6 +189,31 @@ void SystemClock_Config(void)
   }
 }
 
+uint16_t getClusterSize(FATFS fs) {
+    DWORD cluster_size_bytes = 0;
+    WORD sector_size = 0;
+
+#if _MAX_SS != _MIN_SS
+    // Cas où la taille de secteur est variable et stockée dans fs.ssize
+    // (Ce cas ne s'applique PAS à toi si tu as l'erreur "pas de membre ssize")
+    sector_size = fs.ssize;
+#else
+    // Cas où la taille de secteur est fixe (et _MAX_SS == _MIN_SS)
+    // La taille du secteur est alors _MIN_SS (ou _MAX_SS)
+    sector_size = _MIN_SS; // _MIN_SS est défini dans ffconf.h (typiquement 512)
+#endif
+
+    if (fs.csize != 0 && sector_size != 0) { // s'assurer que csize et sector_size sont valides
+        cluster_size_bytes = (DWORD)fs.csize * sector_size;
+        logUart("Info SD Card: Secteurs par cluster: %u, Taille secteur: %u octets", fs.csize, sector_size);
+        logUart("Info SD Card: Taille de cluster calculee: %lu octets (%lu Ko)", cluster_size_bytes, cluster_size_bytes / 1024);
+        return cluster_size_bytes;
+    } else {
+        logUart("Erreur: Impossible de déterminer la taille du cluster (csize ou ssize est 0).");
+        return 0;
+    }
+}
+
 /* USER CODE BEGIN 4 */
 void test_file_transfer(const char *filename) {
     FIL file;
@@ -236,7 +262,7 @@ void test_file_access(const char *filename) {
     uint32_t t0, t1;
 
     // Ouvre le fichier (remplace le nom par celui de ta ROM)
-    logUart("Test d'accès à %s avec un buffer de %d octets", filename, sizeof(buffer));
+    logUart("Test d'acces a %s avec un buffer de %d octets", filename, sizeof(buffer));
     res = f_open(&file, filename, FA_READ);
     if (res != FR_OK) {
         logUart("Open error: %d", res);

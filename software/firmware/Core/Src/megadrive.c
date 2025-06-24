@@ -16,6 +16,8 @@ uint32_t rom_size = 0;
 UINT current_buffer_valid_bytes = 0;
 
 // Pour un buffer de 32 Ko (64 secteurs, 16384 mots 16 bits)
+// Il y a de la RAM libre pour 3 buffers de 32ko ou 6 buffers de 16ko
+// La taille du buffer doit être un multiple de la taille d'un cluster de la carte SD
 #define ROM_BUFFER_SIZE 32768
 uint8_t rom_buffer[ROM_BUFFER_SIZE];
 uint32_t buffer_addr_start = 0; // Adresse de début du buffer dans la ROM
