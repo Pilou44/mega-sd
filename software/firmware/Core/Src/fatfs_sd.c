@@ -8,6 +8,7 @@
 #include "fatfs_sd.h"
 #include <string.h>
 #include "log_uart.h"
+#include <stdbool.h>
 
 uint16_t Timer1, Timer2;					/* 1ms Timer Counter */
 
@@ -46,15 +47,30 @@ static void SPI_TxBuffer(uint8_t *buffer, uint16_t len)
 }
 
 /* SPI receive a byte */
-static uint8_t SPI_RxByte(void)
-{
-	uint8_t dummy, data;
-	dummy = 0xFF;
+static uint8_t SPI_RxByte(void) {
+    uint8_t dummy_tx = 0xFF;
+    uint8_t received_data = 0xFF; // Initialise à une valeur qui n'est pas 0x00 ou 0xFE
+    HAL_StatusTypeDef status;
 
-	while(!__HAL_SPI_GET_FLAG(HSPI_SDCARD, SPI_FLAG_TXE));
-	HAL_SPI_TransmitReceive(HSPI_SDCARD, &dummy, &data, 1, SPI_TIMEOUT);
+    // La boucle while(!__HAL_SPI_GET_FLAG...) est généralement gérée par la fonction HAL elle-même.
+    // Essayons sans pour voir.
+    // while(!__HAL_SPI_GET_FLAG(HSPI_SDCARD, SPI_FLAG_TXE));
 
-	return data;
+    // Assure-toi que SPI_TIMEOUT est défini à une valeur raisonnable (ex: 10, pour 10ms)
+    status = HAL_SPI_TransmitReceive(HSPI_SDCARD, &dummy_tx, &received_data, 1, SPI_TIMEOUT);
+
+    if (status != HAL_OK) {
+        logUart("SPI_RxByte: HAL_SPI_TxRx FAILED! Status: %d, SPI_Err: 0x%lX", status, HSPI_SDCARD.ErrorCode);
+        // En cas d'erreur, que retourner ?
+        // Si on retourne 0xFF, la boucle d'attente de token dans SD_RxDataBlock continuera jusqu'au timeout Timer1,
+        // ce qui pourrait aider à distinguer un timeout de carte d'une erreur SPI.
+        // Ou retourner une valeur spécifique pour indiquer une erreur SPI ici.
+        // Pour le debug, on peut laisser la valeur de received_data (qui sera peut-être invalide)
+        // et se fier au log.
+        // Alternativement, pour forcer le timeout de Timer1 dans SD_RxDataBlock en cas d'erreur SPI:
+        // return 0xFF;
+    }
+    return received_data;
 }
 
 /* SPI receive a byte via pointer */
@@ -108,46 +124,67 @@ static uint8_t SD_CheckPower(void)
 /* receive data block */
 static bool SD_RxDataBlock(BYTE *buff, UINT len)
 {
-	uint8_t token;
+    uint8_t token;
 
-	/* timeout 200ms */
-	Timer1 = 200;
+    /* timeout 200ms */
+    Timer1 = 200;
 
-	/* loop until receive a response or timeout */
-	do {
-		token = SPI_RxByte();
-	} while((token == 0xFF) && Timer1);
+    /* loop until receive a response or timeout */
+    uint32_t loop_count = 0; // Pour voir combien de fois on boucle
+    bool processed_suspicious_byte = false;
+    do {
+        token = SPI_RxByte(); // Appel à ta fonction SPI_RxByte qui logue les erreurs HAL
+        loop_count++;
 
-	/* invalid response */
-	if(token != 0xFE) return FALSE;
+        if (!processed_suspicious_byte && loop_count == 75 && token == 0x00) {
+            logUart("SD_RxDataBlock: Suspicious 0x00 at iter 75! Reading next byte immediately.");
+            token = SPI_RxByte(); // Lis l'octet suivant
+            loop_count++; // Compte cette lecture supplémentaire
+            logUart("SD_RxDataBlock: Byte after suspicious 0x00 is 0x%02X", token);
+            processed_suspicious_byte = true; // Marque qu'on a traité ce cas
+            // La boucle va maintenant évaluer ce nouveau 'token'
+        }
 
-	/* receive data */
-	// OPTIMISATION ICI: Recevoir le bloc de données en une fois
-	// Définit un timeout approprié pour la lecture d'un bloc entier.
-	// Tu peux ajuster cette valeur si nécessaire. 100ms est un point de départ.
-	#define SD_BLOCK_RX_TIMEOUT 100
+        if (token != 0xFF && !processed_suspicious_byte) { // Évite de re-logger le 0x00 si on l'a traité
+            logUart("SD_RxDataBlock: Token candidate: 0x%02X (iter: %lu, T1: %lu)", token, loop_count, Timer1);
+        }
 
-	// Astuce courante : remplir le buffer de réception (buff) avec des octets 0xFF.
-	// Ces 0xFF seront envoyés sur la ligne MOSI pour générer les clocks SPI
-	// pendant que les données réelles de la carte SD sont lues sur la ligne MISO et stockées dans buff.
-	memset(buff, 0xFF, len);
+    } while((token == 0xFF) && Timer1 && !processed_suspicious_byte);
 
-	// Utilise HAL_SPI_TransmitReceive pour envoyer les 0xFF et recevoir les données du bloc.
-	// HSPI_SDCARD est ton handle SPI (ex: hspi1 si tu utilises SPI1 et que CubeMX l'a nommé ainsi).
-	// Assure-toi que HSPI_SDCARD est bien défini et correspond à ton SPI utilisé.
-	if (HAL_SPI_TransmitReceive(HSPI_SDCARD, buff, buff, (uint16_t)len, SD_BLOCK_RX_TIMEOUT) != HAL_OK) {
-		// Une erreur s'est produite pendant le transfert SPI du bloc.
-		// Tu peux ajouter un log ici si tu en as un.
-		// logUart("HAL_SPI_TransmitReceive error in SD_RxDataBlock");
-		logUart("Error reading SD card");
-		return FALSE; // Indique une erreur de lecture du bloc
-	}
+    /* invalid response */
+    if(token != 0xFE) {
+        logUart("SD_RxDataBlock: Echec Start Token! Final Token: 0x%02X (iter: %lu, T1: %lu)", token, loop_count, Timer1);
+        return FALSE;
+    }
+    logUart("SD_RxDataBlock: Start Token 0xFE OK! (iter: %lu, T1: %lu)", loop_count, Timer1);
 
-	/* discard CRC */
-	SPI_RxByte();
-	SPI_RxByte();
+    /* receive data */
+    // OPTIMISATION ICI: Recevoir le bloc de données en une fois
+    // Définit un timeout approprié pour la lecture d'un bloc entier.
+    // Tu peux ajuster cette valeur si nécessaire. 100ms est un point de départ.
+#define SD_BLOCK_RX_TIMEOUT 100
 
-	return TRUE;
+    // Astuce courante : remplir le buffer de réception (buff) avec des octets 0xFF.
+    // Ces 0xFF seront envoyés sur la ligne MOSI pour générer les clocks SPI
+    // pendant que les données réelles de la carte SD sont lues sur la ligne MISO et stockées dans buff.
+    memset(buff, 0xFF, len);
+
+    // Utilise HAL_SPI_TransmitReceive pour envoyer les 0xFF et recevoir les données du bloc.
+    HAL_StatusTypeDef spi_status; // Pour stocker le statut de la fonction HAL
+    spi_status = HAL_SPI_TransmitReceive(HSPI_SDCARD, buff, buff, (uint16_t)len, SD_BLOCK_RX_TIMEOUT);
+
+    if (spi_status != HAL_OK) {
+        // Une erreur s'est produite pendant le transfert SPI du bloc.
+         logUart("SD_RxDataBlock: HAL_SPI_TransmitReceive ECHEC! Status: %d, SPI Error: 0x%lX", spi_status, hspi1.ErrorCode);
+        logUart("Error reading SD card"); // Ton log actuel
+        return FALSE; // Indique une erreur de lecture du bloc
+    }
+
+    /* discard CRC */
+    SPI_RxByte();
+    SPI_RxByte();
+
+    return TRUE;
 }
 
 /* transmit data block */
@@ -340,7 +377,7 @@ DSTATUS SD_disk_initialize(BYTE drv)
 		// Configure ici la vitesse de travail que tu souhaites tester
 		// Par exemple SPI_BAUDRATEPRESCALER_4 pour 21MHz
 		// Ou SPI_BAUDRATEPRESCALER_8 pour 10.5MHz
-		hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8; // <--- VITESSE DE TRAVAIL
+		hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4; // <--- VITESSE DE TRAVAIL
 
 		if (HAL_SPI_Init(HSPI_SDCARD) != HAL_OK) {
 			logUart("HAL_SPI_Init (high speed %s) failed", (hspi1.Init.BaudRatePrescaler == SPI_BAUDRATEPRESCALER_4) ? "21MHz" : "10.5MHz");
@@ -383,8 +420,20 @@ DRESULT SD_disk_read(BYTE pdrv, BYTE* buff, DWORD sector, UINT count)
 
 	if (count == 1)
 	{
-		/* READ_SINGLE_BLOCK */
-		if ((SD_SendCmd(CMD17, sector) == 0) && SD_RxDataBlock(buff, 512)) count = 0;
+        logUart("disk_read: Single block, sector %lu", sector); // Log entrée
+        uint8_t cmd_res = SD_SendCmd(CMD17, sector);
+        logUart("disk_read: CMD17 response: 0x%02X", cmd_res);
+        if (cmd_res == 0) {
+            logUart("disk_read: CMD17 OK, attempting RxDataBlock...");
+            if (SD_RxDataBlock(buff, 512)) {
+                logUart("disk_read: RxDataBlock OK");
+                count = 0;
+            } else {
+                logUart("disk_read: RxDataBlock FAILED");
+            }
+        } else {
+            logUart("disk_read: CMD17 FAILED");
+        }
 	}
 	else
 	{
@@ -404,6 +453,7 @@ DRESULT SD_disk_read(BYTE pdrv, BYTE* buff, DWORD sector, UINT count)
 	/* Idle */
 	DESELECT();
 	SPI_RxByte();
+    logUart("disk_read: returning %s", count ? "RES_ERROR" : "RES_OK");
 
 	return count ? RES_ERROR : RES_OK;
 }
