@@ -121,9 +121,9 @@ static bool SD_RxDataBlock(BYTE *buff, UINT len)
     uint32_t loop_count = 0;
     do {
         token = SPI_RxByte(); // Utilise ta fonction SPI_RxByte existante (qui logue ses propres erreurs HAL si besoin)
-        if (token != 0xFF) {
-            logUart("SD_RxDataBlock: Token candidate: 0x%02X (iter: %lu, T1: %lu)", token, loop_count, Timer1);
-        }
+//        if (token != 0xFF) {
+//            logUart("SD_RxDataBlock: Token candidate: 0x%02X (iter: %lu, T1: %lu)", token, loop_count, Timer1);
+//        }
         loop_count++;
     } while((token == 0xFF) && Timer1);
 
@@ -132,7 +132,7 @@ static bool SD_RxDataBlock(BYTE *buff, UINT len)
         return FALSE;
     }
     // Si on est ici, le token 0xFE a été reçu.
-    logUart("SD_RxDataBlock: Start Token 0xFE OK! (iter: %lu, T1: %lu)", loop_count, Timer1);
+//    logUart("SD_RxDataBlock: Start Token 0xFE OK! (iter: %lu, T1: %lu)", loop_count, Timer1);
 
     /* 2. Réception du bloc de données de 'len' (512) octets en utilisant DMA */
     spiDmaTransferComplete = false; // Réinitialise le flag avant de lancer le DMA
@@ -155,7 +155,7 @@ static bool SD_RxDataBlock(BYTE *buff, UINT len)
         return FALSE;
     }
 
-    logUart("SD_RxDataBlock: DMA Transfer for %u bytes started...", len);
+//    logUart("SD_RxDataBlock: DMA Transfer for %u bytes started...", len);
 
     // Attente de la fin du transfert DMA (avec un timeout)
     // Timer1 peut être réutilisé ou un nouveau timer/compteur peut être utilisé.
@@ -178,7 +178,7 @@ static bool SD_RxDataBlock(BYTE *buff, UINT len)
         return FALSE;
     }
 
-    logUart("SD_RxDataBlock: DMA Transfer OK!");
+//    logUart("SD_RxDataBlock: DMA Transfer OK!");
 
     /* 3. Rejeter les 2 octets de CRC - Inchangé */
     SPI_RxByte(); // Ces appels utilisent toujours le mode polling/bloquant pour 1 octet
