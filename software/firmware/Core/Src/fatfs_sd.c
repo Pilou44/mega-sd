@@ -7,6 +7,7 @@
 #include "diskio.h"
 #include "fatfs_sd.h"
 #include <string.h>
+#include <stdbool.h>
 #include "log_uart.h"
 
 uint16_t Timer1, Timer2;					/* 1ms Timer Counter */
@@ -15,6 +16,10 @@ static volatile DSTATUS Stat = STA_NOINIT;	/* Disk Status */
 static uint8_t CardType;                    /* Type 0:MMC, 1:SDC, 2:Block addressing */
 static uint8_t PowerFlag = 0;				/* Power flag */
 
+// Flag pour la synchronisation DMA
+volatile HAL_StatusTypeDef spiDmaTransferStatus = HAL_OK; // Pour stocker le statut du transfert DMA
+volatile bool spiDmaTransferComplete = false;         // Mis à true par les callbacks DMA
+
 /***************************************
  * SPI functions
  **************************************/
@@ -22,45 +27,45 @@ static uint8_t PowerFlag = 0;				/* Power flag */
 /* slave select */
 static void SELECT(void)
 {
-	HAL_GPIO_WritePin(SD_CS_PORT, SD_CS_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(SD_CS_PORT, SD_CS_PIN, GPIO_PIN_RESET);
 }
 
 /* slave deselect */
 static void DESELECT(void)
 {
-	HAL_GPIO_WritePin(SD_CS_PORT, SD_CS_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SD_CS_PORT, SD_CS_PIN, GPIO_PIN_SET);
 }
 
 /* SPI transmit a byte */
 static void SPI_TxByte(uint8_t data)
 {
-	while(!__HAL_SPI_GET_FLAG(HSPI_SDCARD, SPI_FLAG_TXE));
-	HAL_SPI_Transmit(HSPI_SDCARD, &data, 1, SPI_TIMEOUT);
+    while(!__HAL_SPI_GET_FLAG(HSPI_SDCARD, SPI_FLAG_TXE));
+    HAL_SPI_Transmit(HSPI_SDCARD, &data, 1, SPI_TIMEOUT);
 }
 
 /* SPI transmit buffer */
 static void SPI_TxBuffer(uint8_t *buffer, uint16_t len)
 {
-	while(!__HAL_SPI_GET_FLAG(HSPI_SDCARD, SPI_FLAG_TXE));
-	HAL_SPI_Transmit(HSPI_SDCARD, buffer, len, SPI_TIMEOUT);
+    while(!__HAL_SPI_GET_FLAG(HSPI_SDCARD, SPI_FLAG_TXE));
+    HAL_SPI_Transmit(HSPI_SDCARD, buffer, len, SPI_TIMEOUT);
 }
 
 /* SPI receive a byte */
 static uint8_t SPI_RxByte(void)
 {
-	uint8_t dummy, data;
-	dummy = 0xFF;
+    uint8_t dummy, data;
+    dummy = 0xFF;
 
-	while(!__HAL_SPI_GET_FLAG(HSPI_SDCARD, SPI_FLAG_TXE));
-	HAL_SPI_TransmitReceive(HSPI_SDCARD, &dummy, &data, 1, SPI_TIMEOUT);
+    while(!__HAL_SPI_GET_FLAG(HSPI_SDCARD, SPI_FLAG_TXE));
+    HAL_SPI_TransmitReceive(HSPI_SDCARD, &dummy, &data, 1, SPI_TIMEOUT);
 
-	return data;
+    return data;
 }
 
 /* SPI receive a byte via pointer */
 static void SPI_RxBytePtr(uint8_t *buff) 
 {
-	*buff = SPI_RxByte();
+    *buff = SPI_RxByte();
 }
 
 /***************************************
@@ -70,17 +75,17 @@ static void SPI_RxBytePtr(uint8_t *buff)
 /* wait SD ready */
 static uint8_t SD_ReadyWait(void)
 {
-	uint8_t res;
+    uint8_t res;
 
-	/* timeout 500ms */
-	Timer2 = 500;
+    /* timeout 500ms */
+    Timer2 = 500;
 
-	/* if SD goes ready, receives 0xFF */
-	do {
-		res = SPI_RxByte();
-	} while ((res != 0xFF) && Timer2);
+    /* if SD goes ready, receives 0xFF */
+    do {
+        res = SPI_RxByte();
+    } while ((res != 0xFF) && Timer2);
 
-	return res;
+    return res;
 }
 
 /* power on */
@@ -96,100 +101,132 @@ static void SD_PowerOn(void)
 /* power off */
 static void SD_PowerOff(void) 
 {
-	PowerFlag = 0;
+    PowerFlag = 0;
 }
 
 /* check power flag */
 static uint8_t SD_CheckPower(void) 
 {
-	return PowerFlag;
+    return PowerFlag;
 }
 
 /* receive data block */
 static bool SD_RxDataBlock(BYTE *buff, UINT len)
 {
-	uint8_t token;
+    uint8_t token;
+    HAL_StatusTypeDef dma_status_check; // Pour vérifier le statut de lancement du DMA
 
-	/* timeout 200ms */
-	Timer1 = 200;
+    /* 1. Attente du Start Token (0xFE) - Inchangé */
+    Timer1 = 200; // Timeout de 200ms pour le token
+    uint32_t loop_count = 0;
+    do {
+        token = SPI_RxByte(); // Utilise ta fonction SPI_RxByte existante (qui logue ses propres erreurs HAL si besoin)
+        if (token != 0xFF) {
+            logUart("SD_RxDataBlock: Token candidate: 0x%02X (iter: %lu, T1: %lu)", token, loop_count, Timer1);
+        }
+        loop_count++;
+    } while((token == 0xFF) && Timer1);
 
-	/* loop until receive a response or timeout */
-	do {
-		token = SPI_RxByte();
-	} while((token == 0xFF) && Timer1);
+    if(token != 0xFE) {
+        logUart("SD_RxDataBlock: Echec Start Token! Final Token: 0x%02X (iter: %lu, T1: %lu)", token, loop_count, Timer1);
+        return FALSE;
+    }
+    // Si on est ici, le token 0xFE a été reçu.
+    logUart("SD_RxDataBlock: Start Token 0xFE OK! (iter: %lu, T1: %lu)", loop_count, Timer1);
 
-	/* invalid response */
-	if(token != 0xFE) return FALSE;
+    /* 2. Réception du bloc de données de 'len' (512) octets en utilisant DMA */
+    spiDmaTransferComplete = false; // Réinitialise le flag avant de lancer le DMA
+    spiDmaTransferStatus = HAL_BUSY;  // État initial en attente
 
-	/* receive data */
-	// OPTIMISATION ICI: Recevoir le bloc de données en une fois
-	// Définit un timeout approprié pour la lecture d'un bloc entier.
-	// Tu peux ajuster cette valeur si nécessaire. 100ms est un point de départ.
-	#define SD_BLOCK_RX_TIMEOUT 100
+    // Pour recevoir des données, on doit aussi envoyer des octets "dummy" (0xFF).
+    // Remplis ton buffer 'buff' avec 0xFF s'il ne l'est pas déjà, car 'buff' sera utilisé pour TX et RX.
+    // Ou utilise un buffer TX séparé rempli de 0xFF si 'buff' ne doit pas être modifié avant réception.
+    // Pour HAL_SPI_TransmitReceive_DMA, pTxData et pRxData peuvent pointer vers le même buffer.
+    memset(buff, 0xFF, len); // Prépare les octets dummy à envoyer
 
-	// Astuce courante : remplir le buffer de réception (buff) avec des octets 0xFF.
-	// Ces 0xFF seront envoyés sur la ligne MOSI pour générer les clocks SPI
-	// pendant que les données réelles de la carte SD sont lues sur la ligne MISO et stockées dans buff.
-	memset(buff, 0xFF, len);
+    // Lance le transfert SPI en mode DMA
+    // Assure-toi que HSPI_SDCARD est bien ton handle SPI (ex: &hspi1)
+    dma_status_check = HAL_SPI_TransmitReceive_DMA(HSPI_SDCARD, buff, buff, (uint16_t)len);
 
-	// Utilise HAL_SPI_TransmitReceive pour envoyer les 0xFF et recevoir les données du bloc.
-	// HSPI_SDCARD est ton handle SPI (ex: hspi1 si tu utilises SPI1 et que CubeMX l'a nommé ainsi).
-	// Assure-toi que HSPI_SDCARD est bien défini et correspond à ton SPI utilisé.
-	if (HAL_SPI_TransmitReceive(HSPI_SDCARD, buff, buff, (uint16_t)len, SD_BLOCK_RX_TIMEOUT) != HAL_OK) {
-		// Une erreur s'est produite pendant le transfert SPI du bloc.
-		// Tu peux ajouter un log ici si tu en as un.
-		// logUart("HAL_SPI_TransmitReceive error in SD_RxDataBlock");
-		logUart("Error reading SD card");
-		return FALSE; // Indique une erreur de lecture du bloc
-	}
+    if (dma_status_check != HAL_OK) {
+        // Le lancement du DMA a échoué (ex: DMA occupé, mauvais paramètres)
+        logUart("SD_RxDataBlock: HAL_SPI_TransmitReceive_DMA launch FAILED! Status: %d", dma_status_check);
+        // HSPI_SDCARD->ErrorCode pourrait aussi avoir des infos ici
+        return FALSE;
+    }
 
-	/* discard CRC */
-	SPI_RxByte();
-	SPI_RxByte();
+    logUart("SD_RxDataBlock: DMA Transfer for %u bytes started...", len);
 
-	return TRUE;
+    // Attente de la fin du transfert DMA (avec un timeout)
+    // Timer1 peut être réutilisé ou un nouveau timer/compteur peut être utilisé.
+    // Disons un timeout de 100ms pour le transfert DMA du bloc.
+    Timer1 = 100; // Timeout de 100ms pour le transfert DMA
+    while (!spiDmaTransferComplete && Timer1) {
+        // Attente active. Dans un système plus complexe, on pourrait passer à une autre tâche.
+        // Assure-toi que Timer1 est bien décrémenté par ton ISR SysTick.
+    }
+
+    if (!spiDmaTransferComplete) { // Timeout DMA
+        logUart("SD_RxDataBlock: DMA Transfer TIMEOUT! (Timer1 expired)");
+        // Il faut essayer d'avorter le transfert DMA en cours
+        HAL_SPI_DMAStop(HSPI_SDCARD);
+        return FALSE;
+    }
+
+    if (spiDmaTransferStatus != HAL_OK) { // Erreur reportée par le callback DMA/SPI
+        logUart("SD_RxDataBlock: DMA Transfer FAILED! Reported Status: %d, SPI Error: 0x%lX", spiDmaTransferStatus, HSPI_SDCARD.ErrorCode);
+        return FALSE;
+    }
+
+    logUart("SD_RxDataBlock: DMA Transfer OK!");
+
+    /* 3. Rejeter les 2 octets de CRC - Inchangé */
+    SPI_RxByte(); // Ces appels utilisent toujours le mode polling/bloquant pour 1 octet
+    SPI_RxByte();
+
+    return TRUE; // Succès
 }
 
 /* transmit data block */
 #if _USE_WRITE == 1
 static bool SD_TxDataBlock(const uint8_t *buff, BYTE token)
 {
-	uint8_t resp;
-	uint8_t i = 0;
+    uint8_t resp;
+    uint8_t i = 0;
 
-	/* wait SD ready */
-	if (SD_ReadyWait() != 0xFF) return FALSE;
+    /* wait SD ready */
+    if (SD_ReadyWait() != 0xFF) return FALSE;
 
-	/* transmit token */
-	SPI_TxByte(token);
+    /* transmit token */
+    SPI_TxByte(token);
 
-	/* if it's not STOP token, transmit data */
-	if (token != 0xFD)
-	{
-		SPI_TxBuffer((uint8_t*)buff, 512);
+    /* if it's not STOP token, transmit data */
+    if (token != 0xFD)
+    {
+        SPI_TxBuffer((uint8_t*)buff, 512);
 
-		/* discard CRC */
-		SPI_RxByte();
-		SPI_RxByte();
+        /* discard CRC */
+        SPI_RxByte();
+        SPI_RxByte();
 
-		/* receive response */
-		while (i <= 64)
-		{
-			resp = SPI_RxByte();
+        /* receive response */
+        while (i <= 64)
+        {
+            resp = SPI_RxByte();
 
-			/* transmit 0x05 accepted */
-			if ((resp & 0x1F) == 0x05) break;
-			i++;
-		}
+            /* transmit 0x05 accepted */
+            if ((resp & 0x1F) == 0x05) break;
+            i++;
+        }
 
-		/* recv buffer clear */
-		while (SPI_RxByte() == 0);
-	}
+        /* recv buffer clear */
+        while (SPI_RxByte() == 0);
+    }
 
-	/* transmit 0x05 accepted */
-	if ((resp & 0x1F) == 0x05) return TRUE;
+    /* transmit 0x05 accepted */
+    if ((resp & 0x1F) == 0x05) return TRUE;
 
-	return FALSE;
+    return FALSE;
 }
 #endif /* _USE_WRITE */
 
@@ -239,323 +276,323 @@ static BYTE SD_SendCmd(BYTE cmd, uint32_t arg)
 /* initialize SD */
 DSTATUS SD_disk_initialize(BYTE drv) 
 {
-	uint8_t n, type, ocr[4];
+    uint8_t n, type, ocr[4];
 
-	/* single drive, drv should be 0 */
-	if(drv) return STA_NOINIT;
+    /* single drive, drv should be 0 */
+    if(drv) return STA_NOINIT;
 
-	/* no disk */
-	if(Stat & STA_NODISK) return Stat;
+    /* no disk */
+    if(Stat & STA_NODISK) return Stat;
 
-	if (HAL_SPI_DeInit(HSPI_SDCARD) != HAL_OK) {
-		logUart("HAL_SPI_DeInit (low speed) failed");
-	    SD_PowerOff();
-	    return STA_NOINIT;
-	}
-	hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256; // Pour <= 400kHz
-	if (HAL_SPI_Init(HSPI_SDCARD) != HAL_OK) {
-		logUart("HAL_SPI_Init (low speed) failed");
-		SD_PowerOff();
-		return STA_NOINIT;
-	}
-	logUart("SPI Set to Low Speed for SD Init");
+    if (HAL_SPI_DeInit(HSPI_SDCARD) != HAL_OK) {
+        logUart("HAL_SPI_DeInit (low speed) failed");
+        SD_PowerOff();
+        return STA_NOINIT;
+    }
+    hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256; // Pour <= 400kHz
+    if (HAL_SPI_Init(HSPI_SDCARD) != HAL_OK) {
+        logUart("HAL_SPI_Init (low speed) failed");
+        SD_PowerOff();
+        return STA_NOINIT;
+    }
+    logUart("SPI Set to Low Speed for SD Init");
 
-	/* power on */
-	SD_PowerOn();
+    /* power on */
+    SD_PowerOn();
 
-	/* check disk type */
-	type = 0;
+    /* check disk type */
+    type = 0;
 
-	/* send GO_IDLE_STATE command */
-	if (SD_SendCmd(CMD0, 0) == 1)
-	{
-		/* timeout 1 sec */
-		Timer1 = 1000;
+    /* send GO_IDLE_STATE command */
+    if (SD_SendCmd(CMD0, 0) == 1)
+    {
+        /* timeout 1 sec */
+        Timer1 = 1000;
 
-		/* SDC V2+ accept CMD8 command, http://elm-chan.org/docs/mmc/mmc_e.html */
-		if (SD_SendCmd(CMD8, 0x1AA) == 1)
-		{
-			/* operation condition register */
-			for (n = 0; n < 4; n++)
-			{
-				ocr[n] = SPI_RxByte();
-			}
+        /* SDC V2+ accept CMD8 command, http://elm-chan.org/docs/mmc/mmc_e.html */
+        if (SD_SendCmd(CMD8, 0x1AA) == 1)
+        {
+            /* operation condition register */
+            for (n = 0; n < 4; n++)
+            {
+                ocr[n] = SPI_RxByte();
+            }
 
-			/* voltage range 2.7-3.6V */
-			if (ocr[2] == 0x01 && ocr[3] == 0xAA)
-			{
-				/* ACMD41 with HCS bit */
-				do {
-					if (SD_SendCmd(CMD55, 0) <= 1 && SD_SendCmd(CMD41, 1UL << 30) == 0) break;
-				} while (Timer1);
+            /* voltage range 2.7-3.6V */
+            if (ocr[2] == 0x01 && ocr[3] == 0xAA)
+            {
+                /* ACMD41 with HCS bit */
+                do {
+                    if (SD_SendCmd(CMD55, 0) <= 1 && SD_SendCmd(CMD41, 1UL << 30) == 0) break;
+                } while (Timer1);
 
-				/* READ_OCR */
-				if (Timer1 && SD_SendCmd(CMD58, 0) == 0)
-				{
-					/* Check CCS bit */
-					for (n = 0; n < 4; n++)
-					{
-						ocr[n] = SPI_RxByte();
-					}
+                /* READ_OCR */
+                if (Timer1 && SD_SendCmd(CMD58, 0) == 0)
+                {
+                    /* Check CCS bit */
+                    for (n = 0; n < 4; n++)
+                    {
+                        ocr[n] = SPI_RxByte();
+                    }
 
-					/* SDv2 (HC or SC) */
-					type = (ocr[0] & 0x40) ? CT_SD2 | CT_BLOCK : CT_SD2;
-				}
-			}
-		}
-		else
-		{
-			/* SDC V1 or MMC */
-			type = (SD_SendCmd(CMD55, 0) <= 1 && SD_SendCmd(CMD41, 0) <= 1) ? CT_SD1 : CT_MMC;
+                    /* SDv2 (HC or SC) */
+                    type = (ocr[0] & 0x40) ? CT_SD2 | CT_BLOCK : CT_SD2;
+                }
+            }
+        }
+        else
+        {
+            /* SDC V1 or MMC */
+            type = (SD_SendCmd(CMD55, 0) <= 1 && SD_SendCmd(CMD41, 0) <= 1) ? CT_SD1 : CT_MMC;
 
-			do
-			{
-				if (type == CT_SD1)
-				{
-					if (SD_SendCmd(CMD55, 0) <= 1 && SD_SendCmd(CMD41, 0) == 0) break; /* ACMD41 */
-				}
-				else
-				{
-					if (SD_SendCmd(CMD1, 0) == 0) break; /* CMD1 */
-				}
+            do
+            {
+                if (type == CT_SD1)
+                {
+                    if (SD_SendCmd(CMD55, 0) <= 1 && SD_SendCmd(CMD41, 0) == 0) break; /* ACMD41 */
+                }
+                else
+                {
+                    if (SD_SendCmd(CMD1, 0) == 0) break; /* CMD1 */
+                }
 
-			} while (Timer1);
+            } while (Timer1);
 
-			/* SET_BLOCKLEN */
-			if (!Timer1 || SD_SendCmd(CMD16, 512) != 0) type = 0;
-		}
-	}
+            /* SET_BLOCKLEN */
+            if (!Timer1 || SD_SendCmd(CMD16, 512) != 0) type = 0;
+        }
+    }
 
-	CardType = type;
+    CardType = type;
 
-	/* Clear STA_NOINIT */
-	if (type)
-	{
-		logUart("SD Init Success, CardType: 0x%02X", CardType);
-		if (HAL_SPI_DeInit(HSPI_SDCARD) != HAL_OK) {
-			logUart("HAL_SPI_DeInit (high speed) failed");
-			SD_PowerOff();
-			return STA_NOINIT;
-		}
-		// Configure ici la vitesse de travail que tu souhaites tester
-		// Par exemple SPI_BAUDRATEPRESCALER_4 pour 21MHz
-		// Ou SPI_BAUDRATEPRESCALER_8 pour 10.5MHz
-		hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8; // <--- VITESSE DE TRAVAIL
+    /* Clear STA_NOINIT */
+    if (type)
+    {
+        logUart("SD Init Success, CardType: 0x%02X", CardType);
+        if (HAL_SPI_DeInit(HSPI_SDCARD) != HAL_OK) {
+            logUart("HAL_SPI_DeInit (high speed) failed");
+            SD_PowerOff();
+            return STA_NOINIT;
+        }
+        // Configure ici la vitesse de travail que tu souhaites tester
+        // Par exemple SPI_BAUDRATEPRESCALER_4 pour 21MHz
+        // Ou SPI_BAUDRATEPRESCALER_8 pour 10.5MHz
+        hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8; // <--- VITESSE DE TRAVAIL
 
-		if (HAL_SPI_Init(HSPI_SDCARD) != HAL_OK) {
-			logUart("HAL_SPI_Init (high speed %s) failed", (hspi1.Init.BaudRatePrescaler == SPI_BAUDRATEPRESCALER_4) ? "21MHz" : "10.5MHz");
-			SD_PowerOff();
-			return STA_NOINIT;
-		}
-		logUart("SPI Set to High Speed (%s) for Data Transfer", (hspi1.Init.BaudRatePrescaler == SPI_BAUDRATEPRESCALER_4) ? "21MHz" : "10.5MHz");
-		Stat &= ~STA_NOINIT; // Initialisation réussie
-	}
-	else
-	{
-		logUart("SD Card Initialization Failed (type == 0 at the end)");
-		/* Initialization failed */
-		SD_PowerOff();
-	}
+        if (HAL_SPI_Init(HSPI_SDCARD) != HAL_OK) {
+            logUart("HAL_SPI_Init (high speed %s) failed", (hspi1.Init.BaudRatePrescaler == SPI_BAUDRATEPRESCALER_4) ? "21MHz" : "10.5MHz");
+            SD_PowerOff();
+            return STA_NOINIT;
+        }
+        logUart("SPI Set to High Speed (%s) for Data Transfer", (hspi1.Init.BaudRatePrescaler == SPI_BAUDRATEPRESCALER_4) ? "21MHz" : "10.5MHz");
+        Stat &= ~STA_NOINIT; // Initialisation réussie
+    }
+    else
+    {
+        logUart("SD Card Initialization Failed (type == 0 at the end)");
+        /* Initialization failed */
+        SD_PowerOff();
+    }
 
-	return Stat;
+    return Stat;
 }
 
 /* return disk status */
 DSTATUS SD_disk_status(BYTE drv) 
 {
-	if (drv) return STA_NOINIT;
-	return Stat;
+    if (drv) return STA_NOINIT;
+    return Stat;
 }
 
 /* read sector */
 DRESULT SD_disk_read(BYTE pdrv, BYTE* buff, DWORD sector, UINT count) 
 {
-	/* pdrv should be 0 */
-	if (pdrv || !count) return RES_PARERR;
+    /* pdrv should be 0 */
+    if (pdrv || !count) return RES_PARERR;
 
-	/* no disk */
-	if (Stat & STA_NOINIT) return RES_NOTRDY;
+    /* no disk */
+    if (Stat & STA_NOINIT) return RES_NOTRDY;
 
-	/* convert to byte address */
-	if (!(CardType & CT_SD2)) sector *= 512;
+    /* convert to byte address */
+    if (!(CardType & CT_SD2)) sector *= 512;
 
-	SELECT();
+    SELECT();
 
-	if (count == 1)
-	{
-		/* READ_SINGLE_BLOCK */
-		if ((SD_SendCmd(CMD17, sector) == 0) && SD_RxDataBlock(buff, 512)) count = 0;
-	}
-	else
-	{
-		/* READ_MULTIPLE_BLOCK */
-		if (SD_SendCmd(CMD18, sector) == 0)
-		{
-			do {
-				if (!SD_RxDataBlock(buff, 512)) break;
-				buff += 512;
-			} while (--count);
+    if (count == 1)
+    {
+        /* READ_SINGLE_BLOCK */
+        if ((SD_SendCmd(CMD17, sector) == 0) && SD_RxDataBlock(buff, 512)) count = 0;
+    }
+    else
+    {
+        /* READ_MULTIPLE_BLOCK */
+        if (SD_SendCmd(CMD18, sector) == 0)
+        {
+            do {
+                if (!SD_RxDataBlock(buff, 512)) break;
+                buff += 512;
+            } while (--count);
 
-			/* STOP_TRANSMISSION */
-			SD_SendCmd(CMD12, 0);
-		}
-	}
+            /* STOP_TRANSMISSION */
+            SD_SendCmd(CMD12, 0);
+        }
+    }
 
-	/* Idle */
-	DESELECT();
-	SPI_RxByte();
+    /* Idle */
+    DESELECT();
+    SPI_RxByte();
 
-	return count ? RES_ERROR : RES_OK;
+    return count ? RES_ERROR : RES_OK;
 }
 
 /* write sector */
 #if _USE_WRITE == 1
 DRESULT SD_disk_write(BYTE pdrv, const BYTE* buff, DWORD sector, UINT count) 
 {
-	/* pdrv should be 0 */
-	if (pdrv || !count) return RES_PARERR;
+    /* pdrv should be 0 */
+    if (pdrv || !count) return RES_PARERR;
 
-	/* no disk */
-	if (Stat & STA_NOINIT) return RES_NOTRDY;
+    /* no disk */
+    if (Stat & STA_NOINIT) return RES_NOTRDY;
 
-	/* write protection */
-	if (Stat & STA_PROTECT) return RES_WRPRT;
+    /* write protection */
+    if (Stat & STA_PROTECT) return RES_WRPRT;
 
-	/* convert to byte address */
-	if (!(CardType & CT_SD2)) sector *= 512;
+    /* convert to byte address */
+    if (!(CardType & CT_SD2)) sector *= 512;
 
-	SELECT();
+    SELECT();
 
-	if (count == 1)
-	{
-		/* WRITE_BLOCK */
-		if ((SD_SendCmd(CMD24, sector) == 0) && SD_TxDataBlock(buff, 0xFE))
-			count = 0;
-	}
-	else
-	{
-		/* WRITE_MULTIPLE_BLOCK */
-		if (CardType & CT_SD1)
-		{
-			SD_SendCmd(CMD55, 0);
-			SD_SendCmd(CMD23, count); /* ACMD23 */
-		}
+    if (count == 1)
+    {
+        /* WRITE_BLOCK */
+        if ((SD_SendCmd(CMD24, sector) == 0) && SD_TxDataBlock(buff, 0xFE))
+            count = 0;
+    }
+    else
+    {
+        /* WRITE_MULTIPLE_BLOCK */
+        if (CardType & CT_SD1)
+        {
+            SD_SendCmd(CMD55, 0);
+            SD_SendCmd(CMD23, count); /* ACMD23 */
+        }
 
-		if (SD_SendCmd(CMD25, sector) == 0)
-		{
-			do {
-				if(!SD_TxDataBlock(buff, 0xFC)) break;
-				buff += 512;
-			} while (--count);
+        if (SD_SendCmd(CMD25, sector) == 0)
+        {
+            do {
+                if(!SD_TxDataBlock(buff, 0xFC)) break;
+                buff += 512;
+            } while (--count);
 
-			/* STOP_TRAN token */
-			if(!SD_TxDataBlock(0, 0xFD))
-			{
-				count = 1;
-			}
-		}
-	}
+            /* STOP_TRAN token */
+            if(!SD_TxDataBlock(0, 0xFD))
+            {
+                count = 1;
+            }
+        }
+    }
 
-	/* Idle */
-	DESELECT();
-	SPI_RxByte();
+    /* Idle */
+    DESELECT();
+    SPI_RxByte();
 
-	return count ? RES_ERROR : RES_OK;
+    return count ? RES_ERROR : RES_OK;
 }
 #endif /* _USE_WRITE */
 
 /* ioctl */
 DRESULT SD_disk_ioctl(BYTE drv, BYTE ctrl, void *buff) 
 {
-	DRESULT res;
-	uint8_t n, csd[16], *ptr = buff;
-	WORD csize;
+    DRESULT res;
+    uint8_t n, csd[16], *ptr = buff;
+    WORD csize;
 
-	/* pdrv should be 0 */
-	if (drv) return RES_PARERR;
-	res = RES_ERROR;
+    /* pdrv should be 0 */
+    if (drv) return RES_PARERR;
+    res = RES_ERROR;
 
-	if (ctrl == CTRL_POWER)
-	{
-		switch (*ptr)
-		{
-		case 0:
-			SD_PowerOff();		/* Power Off */
-			res = RES_OK;
-			break;
-		case 1:
-			SD_PowerOn();		/* Power On */
-			res = RES_OK;
-			break;
-		case 2:
-			*(ptr + 1) = SD_CheckPower();
-			res = RES_OK;		/* Power Check */
-			break;
-		default:
-			res = RES_PARERR;
-		}
-	}
-	else
-	{
-		/* no disk */
-		if (Stat & STA_NOINIT) return RES_NOTRDY;
+    if (ctrl == CTRL_POWER)
+    {
+        switch (*ptr)
+        {
+        case 0:
+            SD_PowerOff();		/* Power Off */
+            res = RES_OK;
+            break;
+        case 1:
+            SD_PowerOn();		/* Power On */
+            res = RES_OK;
+            break;
+        case 2:
+            *(ptr + 1) = SD_CheckPower();
+            res = RES_OK;		/* Power Check */
+            break;
+        default:
+            res = RES_PARERR;
+        }
+    }
+    else
+    {
+        /* no disk */
+        if (Stat & STA_NOINIT) return RES_NOTRDY;
 
-		SELECT();
+        SELECT();
 
-		switch (ctrl)
-		{
-		case GET_SECTOR_COUNT:
-			/* SEND_CSD */
-			if ((SD_SendCmd(CMD9, 0) == 0) && SD_RxDataBlock(csd, 16))
-			{
-				if ((csd[0] >> 6) == 1)
-				{
-					/* SDC V2 */
-					csize = csd[9] + ((WORD) csd[8] << 8) + 1;
-					*(DWORD*) buff = (DWORD) csize << 10;
-				}
-				else
-				{
-					/* MMC or SDC V1 */
-					n = (csd[5] & 15) + ((csd[10] & 128) >> 7) + ((csd[9] & 3) << 1) + 2;
-					csize = (csd[8] >> 6) + ((WORD) csd[7] << 2) + ((WORD) (csd[6] & 3) << 10) + 1;
-					*(DWORD*) buff = (DWORD) csize << (n - 9);
-				}
-				res = RES_OK;
-			}
-			break;
-		case GET_SECTOR_SIZE:
-			*(WORD*) buff = 512;
-			res = RES_OK;
-			break;
-		case CTRL_SYNC:
-			if (SD_ReadyWait() == 0xFF) res = RES_OK;
-			break;
-		case MMC_GET_CSD:
-			/* SEND_CSD */
-			if (SD_SendCmd(CMD9, 0) == 0 && SD_RxDataBlock(ptr, 16)) res = RES_OK;
-			break;
-		case MMC_GET_CID:
-			/* SEND_CID */
-			if (SD_SendCmd(CMD10, 0) == 0 && SD_RxDataBlock(ptr, 16)) res = RES_OK;
-			break;
-		case MMC_GET_OCR:
-			/* READ_OCR */
-			if (SD_SendCmd(CMD58, 0) == 0)
-			{
-				for (n = 0; n < 4; n++)
-				{
-					*ptr++ = SPI_RxByte();
-				}
-				res = RES_OK;
-			}
-		default:
-			res = RES_PARERR;
-		}
+        switch (ctrl)
+        {
+        case GET_SECTOR_COUNT:
+            /* SEND_CSD */
+            if ((SD_SendCmd(CMD9, 0) == 0) && SD_RxDataBlock(csd, 16))
+            {
+                if ((csd[0] >> 6) == 1)
+                {
+                    /* SDC V2 */
+                    csize = csd[9] + ((WORD) csd[8] << 8) + 1;
+                    *(DWORD*) buff = (DWORD) csize << 10;
+                }
+                else
+                {
+                    /* MMC or SDC V1 */
+                    n = (csd[5] & 15) + ((csd[10] & 128) >> 7) + ((csd[9] & 3) << 1) + 2;
+                    csize = (csd[8] >> 6) + ((WORD) csd[7] << 2) + ((WORD) (csd[6] & 3) << 10) + 1;
+                    *(DWORD*) buff = (DWORD) csize << (n - 9);
+                }
+                res = RES_OK;
+            }
+            break;
+        case GET_SECTOR_SIZE:
+            *(WORD*) buff = 512;
+            res = RES_OK;
+            break;
+        case CTRL_SYNC:
+            if (SD_ReadyWait() == 0xFF) res = RES_OK;
+            break;
+        case MMC_GET_CSD:
+            /* SEND_CSD */
+            if (SD_SendCmd(CMD9, 0) == 0 && SD_RxDataBlock(ptr, 16)) res = RES_OK;
+            break;
+        case MMC_GET_CID:
+            /* SEND_CID */
+            if (SD_SendCmd(CMD10, 0) == 0 && SD_RxDataBlock(ptr, 16)) res = RES_OK;
+            break;
+        case MMC_GET_OCR:
+            /* READ_OCR */
+            if (SD_SendCmd(CMD58, 0) == 0)
+            {
+                for (n = 0; n < 4; n++)
+                {
+                    *ptr++ = SPI_RxByte();
+                }
+                res = RES_OK;
+            }
+        default:
+            res = RES_PARERR;
+        }
 
-		DESELECT();
-		SPI_RxByte();
-	}
+        DESELECT();
+        SPI_RxByte();
+    }
 
-	return res;
+    return res;
 }

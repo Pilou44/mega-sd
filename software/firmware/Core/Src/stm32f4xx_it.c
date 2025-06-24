@@ -22,6 +22,7 @@
 #include "stm32f4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,9 +56,11 @@ extern uint16_t Timer1, Timer2;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-
+extern DMA_HandleTypeDef hdma_spi1_rx;
+extern DMA_HandleTypeDef hdma_spi1_tx;
 /* USER CODE BEGIN EV */
-
+extern volatile HAL_StatusTypeDef spiDmaTransferStatus;
+extern volatile bool spiDmaTransferComplete;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -205,6 +208,55 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32f4xx.s).                    */
 /******************************************************************************/
 
+/**
+  * @brief This function handles DMA2 stream0 global interrupt.
+  */
+void DMA2_Stream0_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream0_IRQn 0 */
+
+  /* USER CODE END DMA2_Stream0_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_spi1_rx);
+  /* USER CODE BEGIN DMA2_Stream0_IRQn 1 */
+
+  /* USER CODE END DMA2_Stream0_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA2 stream3 global interrupt.
+  */
+void DMA2_Stream3_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream3_IRQn 0 */
+
+  /* USER CODE END DMA2_Stream3_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_spi1_tx);
+  /* USER CODE BEGIN DMA2_Stream3_IRQn 1 */
+
+  /* USER CODE END DMA2_Stream3_IRQn 1 */
+}
+
 /* USER CODE BEGIN 1 */
+
+// Callback appelé lorsque le transfert SPI DMA (TX et RX) est terminé
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+  if (hspi->Instance == SPI1) // Vérifie si c'est bien notre SPI1
+  {
+    spiDmaTransferStatus = HAL_OK;
+    spiDmaTransferComplete = true;
+  }
+}
+
+// Callback appelé en cas d'erreur SPI (qui peut aussi être une erreur DMA sous-jacente)
+void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
+{
+  if (hspi->Instance == SPI1)
+  {
+    spiDmaTransferStatus = HAL_ERROR; // Ou tu pourrais stocker hspi->ErrorCode
+    spiDmaTransferComplete = true;    // On signale aussi la fin pour débloquer l'attente
+    // logUart("HAL_SPI_ErrorCallback! SPI Error: 0x%lX", hspi->ErrorCode); // Log optionnel
+  }
+}
 
 /* USER CODE END 1 */
