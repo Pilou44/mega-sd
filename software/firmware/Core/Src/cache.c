@@ -90,14 +90,7 @@ static bool load_page_from_sd(uint32_t romBlockAddrToLoad, int cacheSlotIndex) {
         return false;
     }
 
-    // Lecture (en utilisant DMA ou la méthode que tu as validée)
-    // Pour l'instant, je réutilise une structure similaire à ton getRomWord,
-    // mais ici on lit un bloc entier.
-    // Tu adapteras avec ta fonction de lecture de bloc DMA optimisée.
-    // Ici, on lit directement dans le buffer de la page de cache.
-    // memset(cache[cacheSlotIndex].buffer, 0xFF, CACHE_PAGE_SIZE); // Préparation pour DMA si besoin
-    // res = HAL_SPI_TransmitReceive_DMA(HSPI_SDCARD, cache[cacheSlotIndex].buffer, cache[cacheSlotIndex].buffer, CACHE_PAGE_SIZE); // Exemple DMA
-    // Ici, utilisons f_read pour rester cohérent avec la logique FatFs pour l'instant
+    // Lecture
     res = f_read(&rom_file, cache[cacheSlotIndex].buffer, CACHE_PAGE_SIZE, &bytes_read);
     if (res != FR_OK) {
         logUart("Cache: f_read error %d pour adresse 0x%08lX", res, romBlockAddrToLoad);

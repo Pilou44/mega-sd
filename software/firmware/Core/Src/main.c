@@ -191,6 +191,8 @@ void SystemClock_Config(void)
   }
 }
 
+/* USER CODE BEGIN 4 */
+
 uint16_t getClusterSize(FATFS fs) {
     DWORD cluster_size_bytes = 0;
     WORD sector_size = 0;
@@ -216,7 +218,6 @@ uint16_t getClusterSize(FATFS fs) {
     }
 }
 
-/* USER CODE BEGIN 4 */
 void boot(void) {
     // 1. Ouvre la ROM
     if (!loadRom("boot/Columns.gen")) {
