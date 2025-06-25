@@ -6,23 +6,9 @@
  */
 
 #include "megadrive.h"
-#include "fatfs.h"
+#include "cache.h"
 #include "log_uart.h"
 #include <string.h>
-
-
-FIL rom_file;
-uint32_t rom_size = 0;
-UINT current_buffer_valid_bytes = 0;
-
-// Pour un buffer de 32 Ko (64 secteurs, 16384 mots 16 bits)
-// Il y a de la RAM libre pour 3 buffers de 32ko ou 6 buffers de 16ko
-// La taille du buffer doit être un multiple de la taille d'un cluster de la carte SD
-#define ROM_BUFFER_SIZE 32768
-uint8_t rom_buffer[ROM_BUFFER_SIZE];
-uint32_t buffer_addr_start = 0; // Adresse de début du buffer dans la ROM
-
-
 
 uint32_t readAddress(void) {
     uint32_t address = 0;
@@ -177,70 +163,6 @@ bool isReadCycle(void) {
 
 
 
-// Ouvre la ROM et prépare la lecture
-int loadRom(const char *path) {
-    FRESULT res;
-    res = f_open(&rom_file, path, FA_READ);
-
-    if (res != FR_OK) {
-        logUart("Erreur ouverture ROM: %d", res);
-        return 0;
-    }
-
-    rom_size = f_size(&rom_file);
-    // Charge le premier buffer
-    f_lseek(&rom_file, 0);
-    res = f_read(&rom_file, rom_buffer, ROM_BUFFER_SIZE, &current_buffer_valid_bytes);
-
-    if (res != FR_OK) {
-        logUart("Erreur lecture ROM (f_read): %d", res);
-        f_close(&rom_file); // Important de fermer le fichier en cas d'erreur post-ouverture
-        return 0; // Échec
-    }
-
-    if (current_buffer_valid_bytes == 0 && rom_size > 0) {
-        logUart("Erreur: 0 octet lu par f_read dans loadRom pour ROM non vide");
-        f_close(&rom_file);
-        return 0;
-    }
-
-    buffer_addr_start = 0;
-    logUart("ROM chargee, taille = %lu octets", rom_size);
-    return 1;
-}
-
-// Fonction pour fournir le mot demandé par la Mega Drive
-uint16_t getRomWord(uint32_t addr) {
-    // Limite à la taille de la ROM
-    if (addr > rom_size - 2) return 0xFFFF;
-
-    // Si l'adresse demandée n'est pas dans le buffer courant, recharge le buffer
-    if (addr < buffer_addr_start || addr >= buffer_addr_start + current_buffer_valid_bytes) {
-    	// Calcule le début du bloc aligné à charger.
-        // new_buffer_file_start est l'adresse de début dans le fichier ROM.
-        uint32_t new_buffer_file_start = addr & ~(ROM_BUFFER_SIZE - 1);
-
-        f_lseek(&rom_file, new_buffer_file_start);
-        FRESULT res_read;
-        res_read = f_read(&rom_file, rom_buffer, ROM_BUFFER_SIZE, &current_buffer_valid_bytes);
-
-        if (res_read != FR_OK) {
-            logUart("Erreur f_read dans getRomWord: %d", res_read);
-            return 0xFFFF; // Erreur de lecture
-        }
-
-        if (current_buffer_valid_bytes == 0 && new_buffer_file_start < rom_size) {
-            // On s'attendait à lire des données mais on n'a rien eu.
-            logUart("Erreur: 0 octet lu par f_read pour bloc non-EOF");
-            return 0xFFFF;
-        }
-
-        buffer_addr_start = new_buffer_file_start;
-    }
-    uint32_t offset = addr - buffer_addr_start;
-    // Les ROMs MD sont en 16 bits big endian, adapte si besoin
-    return (rom_buffer[offset] << 8) | rom_buffer[offset+1];
-}
 
 // Boucle principale pour interagir avec la Mega Drive
 // 1) Détecter /CEO (Chip Enable) au niveau BAS.
@@ -258,45 +180,32 @@ uint16_t getRomWord(uint32_t addr) {
 void mainMegadriveLoop(void) {
     uint32_t access_count = 0;
     while (1) {
-    	if (isChipEnableLow()) { // Étape 1: /CEO est BAS
-    	    if (isReadCycle()) { // Étape 2: /LWR et /UWR sont HAUT
-    	        // Séquence pour un cycle de lecture ROM
-    	        uint32_t address = readAddress();     // Étape 3
-    	        uint16_t word = getRomWord(address);  // Étape 4
-    	        writeData(word);                      // Étape 6
-    	        enableDataBusOutput();                // Étape 7
-    	        assertDtack();                        // Étape 8
-    	        maintainDtackFixDuration();           // Étape 9
-    	        deassertDtack();                      // Étape 10
-    	        disableDataBusOutput();               // Étape 11
+        if (isChipEnableLow()) {                            // Étape 1: /CEO est BAS
+            if (isReadCycle()) {                            // Étape 2: /LWR et /UWR sont HAUT
+                // Séquence pour un cycle de lecture ROM
+                uint32_t address = readAddress();           // Étape 3
+                uint16_t word = cache_getRomWord(address);  // Étape 4
+                writeData(word);                            // Étape 6
+                enableDataBusOutput();                      // Étape 7
+                assertDtack();                              // Étape 8
+                maintainDtackFixDuration();                 // Étape 9
+                deassertDtack();                            // Étape 10
+                disableDataBusOutput();                     // Étape 11
 
 //    	        if (++access_count % 10000 == 0) {
 //                    logUart("Acces Mega Drive #%lu", access_count);
 //    	        }
-    	    } else {
-    	        // C'est une requête d'écriture (/LWR ou /UWR ou les deux sont BAS)
-    	    	// Pour l'instant, on ignore et on ne génère pas de /DTACK.
+            } else {
+                // C'est une requête d'écriture (/LWR ou /UWR ou les deux sont BAS)
+                // Pour l'instant, on ignore et on ne génère pas de /DTACK.
 //    	    	logUart("Write cycle, not handled for now");
-    	    }
+            }
 
-	        // Étape 12: Attendre que /CEO remonte au niveau HAUT
-	        while (isChipEnableLow());
-    	} else {
-    	    // /CEO est HAUT, la cartouche n'est pas sélectionnée.
-    	    // Ne rien faire.
-    	}
+            // Étape 12: Attendre que /CEO remonte au niveau HAUT
+            while (isChipEnableLow());
+        } else {
+            // /CEO est HAUT, la cartouche n'est pas sélectionnée.
+            // Ne rien faire.
+        }
     }
-}
-
-void boot(void) {
-	// 1. Ouvre la ROM
-	if (!loadRom("boot/Columns.gen")) {
-		logUart("Echec ouverture ROM boot/Columns.gen");
-		while(1); // Stoppe tout si erreur
-	}
-
-	logUart("En attente Mega Drive...");
-
-	// 2. Lance la boucle principale de gestion du bus Mega Drive
-	mainMegadriveLoop();
 }

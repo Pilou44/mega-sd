@@ -21,11 +21,6 @@ void assertDtack(void);
 void deassertDtack(void);
 void maintainDtackFixDuration(void);
 void maintainDtackWithAS(void);
-int loadRom(const char *path);
-uint16_t getRomWord(uint32_t addr);
 void mainMegadriveLoop(void);
-
-
-void boot(void);
 
 #endif /* INC_MEGADRIVE_H_ */

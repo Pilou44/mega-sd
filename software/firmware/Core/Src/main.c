@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "log_uart.h"
+#include "cache.h"
 #include "megadrive.h"
 /* USER CODE END Includes */
 
@@ -59,6 +60,7 @@ FILINFO fno;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+void boot(void);
 void list_sd_root(void);
 void test_file_transfer(const char *filename);
 void test_file_access(const char *filename);
@@ -215,6 +217,19 @@ uint16_t getClusterSize(FATFS fs) {
 }
 
 /* USER CODE BEGIN 4 */
+void boot(void) {
+    // 1. Ouvre la ROM
+    if (!loadRom("boot/Columns.gen")) {
+        logUart("Echec ouverture ROM boot/Columns.gen");
+        while(1); // Stoppe tout si erreur
+    }
+
+    logUart("En attente Mega Drive...");
+
+    // 2. Lance la boucle principale de gestion du bus Mega Drive
+    mainMegadriveLoop();
+}
+
 void test_file_transfer(const char *filename) {
     FIL file;
     FRESULT res;
