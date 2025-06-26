@@ -10,6 +10,8 @@
 #include <stdbool.h>
 #include "log_uart.h"
 
+static uint8_t SD_ReadyWait_Timeout(uint16_t timeout_ms);
+
 uint16_t Timer1, Timer2;					/* 1ms Timer Counter */
 
 static volatile DSTATUS Stat = STA_NOINIT;	/* Disk Status */
@@ -75,17 +77,18 @@ static void SPI_RxBytePtr(uint8_t *buff)
 /* wait SD ready */
 static uint8_t SD_ReadyWait(void)
 {
-    uint8_t res;
-
-    /* timeout 500ms */
-    Timer2 = 500;
-
-    /* if SD goes ready, receives 0xFF */
-    do {
-        res = SPI_RxByte();
-    } while ((res != 0xFF) && Timer2);
-
-    return res;
+    return SD_ReadyWait_Timeout(500);
+//    uint8_t res;
+//
+//    /* timeout 500ms */
+//    Timer2 = 500;
+//
+//    /* if SD goes ready, receives 0xFF */
+//    do {
+//        res = SPI_RxByte();
+//    } while ((res != 0xFF) && Timer2);
+//
+//    return res;
 }
 
 /* power on */
@@ -192,7 +195,6 @@ static bool SD_RxDataBlock(BYTE *buff, UINT len)
 static bool SD_TxDataBlock(const uint8_t *buff, BYTE token)
 {
     uint8_t resp;
-    uint8_t i = 0;
 
     /* wait SD ready */
     if (SD_ReadyWait() != 0xFF) return FALSE;
@@ -206,29 +208,68 @@ static bool SD_TxDataBlock(const uint8_t *buff, BYTE token)
         SPI_TxBuffer((uint8_t*)buff, 512);
 
         /* discard CRC */
-        SPI_RxByte();
-        SPI_RxByte();
+//        SPI_RxByte();
+//        SPI_RxByte();
+        SPI_TxByte(0xFF); // CRC Fictif octet 1
+        SPI_TxByte(0xFF); // CRC Fictif octet 2
 
         /* receive response */
-        while (i <= 64)
-        {
+        Timer1 = 200; // Exemple: Timeout de 200ms pour la réponse
+        do {
             resp = SPI_RxByte();
+        } while (resp == 0xFF && Timer1); // La carte envoie 0xFF avant sa réponse.
 
-            /* transmit 0x05 accepted */
-            if ((resp & 0x1F) == 0x05) break;
-            i++;
+        // Vérifie si le token de réponse est "Données Acceptées"
+        if (!Timer1 || (resp & 0x1F) != 0x05) {
+            logUart("SD_TxDataBlock: Erreur Data Response Token ou Timeout. Reponse: 0x%02X", resp);
+            // Même si erreur, la carte peut passer busy. Il faut attendre.
+            SD_ReadyWait_Timeout(500); // Attendre que la carte finisse son cycle (long timeout)
+            return FALSE; // Échec
         }
 
-        /* recv buffer clear */
-        while (SPI_RxByte() == 0);
+        /* 5. Attendre que la carte ne soit plus "busy" (fin de l'écriture physique en flash) */
+                // Après avoir accepté les données, la carte met MISO à BAS (0x00) pendant qu'elle écrit.
+                // Il faut attendre que MISO revienne à HAUT (0xFF). Cela peut être TRES LONG (200-500ms ou plus).
+                // Ta boucle "while (SPI_RxByte() == 0);" est dangereuse :
+                //    - Pas de timeout : risque de boucle infinie si la carte reste busy.
+                //    - Elle s'arrête dès que SPI_RxByte() != 0. Elle devrait attendre SPI_RxByte() == 0xFF.
+                if (SD_ReadyWait_Timeout(500) != 0xFF) { // Utilise une fonction avec timeout (ex: 500ms)
+                     logUart("SD_TxDataBlock: Timeout attente fin de BUSY apres ecriture bloc.");
+                     return FALSE;
+                }
+                return TRUE; // Succès de l'écriture du bloc de données
+    }
+    else if (token == 0xFD) // C'est un token STOP_TRAN (après un CMD25)
+    {
+        // Après avoir envoyé 0xFD, la carte SD a besoin que le maître lise au moins un octet "stuff byte".
+        // Elle peut envoyer n'importe quoi (généralement 0x00 ou 0xFF) avant de passer busy.
+        SPI_RxByte(); // Lire et ignorer cet octet.
+
+        // Ensuite, la carte passe "busy" pour écrire tous les blocs précédents. Attendre la fin.
+        if (SD_ReadyWait_Timeout(500) != 0xFF) { // Long timeout, car l'écriture de plusieurs blocs peut prendre du temps.
+            logUart("SD_TxDataBlock: Timeout attente fin de BUSY apres STOP_TRAN (0xFD).");
+            return FALSE;
+        }
+        return TRUE; // Succès de l'opération Stop Tran
     }
 
-    /* transmit 0x05 accepted */
-    if ((resp & 0x1F) == 0x05) return TRUE;
-
-    return FALSE;
+    return FALSE; // Ne devrait pas arriver si token est valide (0xFE, 0xFC, 0xFD)
 }
 #endif /* _USE_WRITE */
+
+// Fonction helper pour SD_ReadyWait avec timeout (tu en as peut-être déjà une)
+// Retourne 0xFF si la carte est prête, ou le dernier octet lu si timeout.
+static uint8_t SD_ReadyWait_Timeout(uint16_t timeout_ms) {
+    uint8_t res;
+    Timer2 = timeout_ms; // Utilise Timer2, comme SD_ReadyWait()
+    do {
+        res = SPI_RxByte();
+    } while (res != 0xFF && Timer2); // Vérifie Timer2
+    if (res != 0xFF && Timer2 == 0) { // Pour être explicite sur la condition de timeout
+        logUart("SD_ReadyWait_Timeout: TIMEOUT! Dernier octet lu: 0x%02X", res);
+    }
+    return res;
+}
 
 /* transmit command */
 static BYTE SD_SendCmd(BYTE cmd, uint32_t arg)
