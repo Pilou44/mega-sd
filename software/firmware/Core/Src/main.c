@@ -131,21 +131,21 @@ int main(void)
   }
   test_file_write("test_4ko.txt", long_text_buffer);
 
-//  list_sd_root();
-//  test_file_transfer("test.txt");
-//  test_file_access("test.txt");
-//  test_file_transfer("roms/Sonic The Hedgehog 2 (World).md");
-//  test_file_access("roms/Sonic The Hedgehog 2 (World).md");
-//  test_file_transfer("roms/Sonic2.md");
-//  test_file_access("roms/Sonic2.md");
-//  test_file_transfer("roms/Sonic The Hedgehog (USA, Europe).md");
-//  test_file_access("roms/Sonic The Hedgehog (USA, Europe).md");
-//  test_file_transfer("roms/Sonic.md");
-//  test_file_access("roms/Sonic.md");
-//  test_file_transfer("roms/Columns (W) (REV01) [!].gen");
-//  test_file_access("roms/Columns (W) (REV01) [!].gen");
-//  test_file_transfer("roms/Columns.gen");
-//  test_file_access("roms/Columns.gen");
+  list_sd_root();
+  test_file_transfer("test.txt");
+  test_file_access("test.txt");
+  test_file_transfer("roms/Sonic The Hedgehog 2 (World).md");
+  test_file_access("roms/Sonic The Hedgehog 2 (World).md");
+  test_file_transfer("roms/Sonic2.md");
+  test_file_access("roms/Sonic2.md");
+  test_file_transfer("roms/Sonic The Hedgehog (USA, Europe).md");
+  test_file_access("roms/Sonic The Hedgehog (USA, Europe).md");
+  test_file_transfer("roms/Sonic.md");
+  test_file_access("roms/Sonic.md");
+  test_file_transfer("roms/Columns (W) (REV01) [!].gen");
+  test_file_access("roms/Columns (W) (REV01) [!].gen");
+  test_file_transfer("roms/Columns.gen");
+  test_file_access("roms/Columns.gen");
   while (1)
   {
     /* USER CODE END WHILE */

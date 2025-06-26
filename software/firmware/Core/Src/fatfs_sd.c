@@ -286,12 +286,6 @@ static BYTE SD_SendCmd(BYTE cmd, uint32_t arg)
 {
     uint8_t n, res, crc;
 
-    // 1. Toujours relâcher la SD avant d'envoyer une commande
-    DESELECT();
-    SPI_RxByte(); // 1 dummy clock
-
-    // 2. Sélectionner la SD et attendre 1 dummy clock
-    SELECT();
     SPI_RxByte();
 
     // 3. Envoyer la commande
@@ -320,6 +314,35 @@ static BYTE SD_SendCmd(BYTE cmd, uint32_t arg)
     return res;
 }
 
+/**
+ * @brief Exécute une transaction de commande SD complète (SELECT, CMD, Réponse, DESELECT).
+ * @param cmd La commande SD (ex: CMD0, CMD8).
+ * @param arg L'argument de la commande.
+ * @param response_buffer Buffer pour stocker les octets de réponse QUI SUIVENT R1 (ex: pour R7, R3). Mettre NULL si non applicable.
+ * @param response_len_to_read Nombre d'octets à lire dans response_buffer APRÈS R1. Mettre 0 si non applicable.
+ * @return La réponse R1 de la commande. Retourne 0xFF en cas de timeout pour R1.
+ */
+static BYTE execute_sd_command_transaction(BYTE cmd, uint32_t arg, uint8_t *response_buffer, UINT response_len_to_read) {
+    BYTE response;
+
+    SELECT(); // 1. Sélectionne la carte
+
+    response = SD_SendCmd(cmd, arg); // 2. Envoie la commande et obtient R1
+
+    // 3. Si R1 est valide et qu'on attend des données de réponse supplémentaires
+    if (response != 0xFF && response_buffer != NULL && response_len_to_read > 0) {
+        for (UINT i = 0; i < response_len_to_read; i++) {
+            response_buffer[i] = SPI_RxByte();
+        }
+    }
+
+    DESELECT(); // 4. Désélectionne la carte
+
+    SPI_RxByte(); // 5. Envoie 8 clocks dummy après DESELECT pour que la carte relâche MISO
+
+    return response;
+}
+
 /***************************************
  * user_diskio.c functions
  **************************************/
@@ -327,7 +350,7 @@ static BYTE SD_SendCmd(BYTE cmd, uint32_t arg)
 /* initialize SD */
 DSTATUS SD_disk_initialize(BYTE drv) 
 {
-    uint8_t n, type, ocr[4];
+    uint8_t type, ocr[4];
 
     /* single drive, drv should be 0 */
     if(drv) return STA_NOINIT;
@@ -355,37 +378,25 @@ DSTATUS SD_disk_initialize(BYTE drv)
     type = 0;
 
     /* send GO_IDLE_STATE command */
-    if (SD_SendCmd(CMD0, 0) == 1)
+    if (execute_sd_command_transaction(CMD0, 0, NULL, 0) == 1)
     {
         /* timeout 1 sec */
         Timer1 = 1000;
 
         /* SDC V2+ accept CMD8 command, http://elm-chan.org/docs/mmc/mmc_e.html */
-        if (SD_SendCmd(CMD8, 0x1AA) == 1)
+        if (execute_sd_command_transaction(CMD8, 0x1AA, ocr, 4) == 1)
         {
-            /* operation condition register */
-            for (n = 0; n < 4; n++)
-            {
-                ocr[n] = SPI_RxByte();
-            }
-
             /* voltage range 2.7-3.6V */
             if (ocr[2] == 0x01 && ocr[3] == 0xAA)
             {
                 /* ACMD41 with HCS bit */
                 do {
-                    if (SD_SendCmd(CMD55, 0) <= 1 && SD_SendCmd(CMD41, 1UL << 30) == 0) break;
+                    if (execute_sd_command_transaction(CMD55, 0, NULL, 0) <= 1 && execute_sd_command_transaction(CMD41, 1UL << 30, NULL, 0) == 0) break;
                 } while (Timer1);
 
                 /* READ_OCR */
-                if (Timer1 && SD_SendCmd(CMD58, 0) == 0)
+                if (Timer1 && execute_sd_command_transaction(CMD58, 0, ocr, 4) == 0)
                 {
-                    /* Check CCS bit */
-                    for (n = 0; n < 4; n++)
-                    {
-                        ocr[n] = SPI_RxByte();
-                    }
-
                     /* SDv2 (HC or SC) */
                     type = (ocr[0] & 0x40) ? CT_SD2 | CT_BLOCK : CT_SD2;
                 }
@@ -394,23 +405,23 @@ DSTATUS SD_disk_initialize(BYTE drv)
         else
         {
             /* SDC V1 or MMC */
-            type = (SD_SendCmd(CMD55, 0) <= 1 && SD_SendCmd(CMD41, 0) <= 1) ? CT_SD1 : CT_MMC;
+            type = (execute_sd_command_transaction(CMD55, 0, NULL, 0) <= 1 && execute_sd_command_transaction(CMD41, 0, NULL, 0) <= 1) ? CT_SD1 : CT_MMC;
 
             do
             {
                 if (type == CT_SD1)
                 {
-                    if (SD_SendCmd(CMD55, 0) <= 1 && SD_SendCmd(CMD41, 0) == 0) break; /* ACMD41 */
+                    if (execute_sd_command_transaction(CMD55, 0, NULL, 0) <= 1 && execute_sd_command_transaction(CMD41, 0, NULL, 0) == 0) break; /* ACMD41 */
                 }
                 else
                 {
-                    if (SD_SendCmd(CMD1, 0) == 0) break; /* CMD1 */
+                    if (execute_sd_command_transaction(CMD1, 0, NULL, 0) == 0) break; /* CMD1 */
                 }
 
             } while (Timer1);
 
             /* SET_BLOCKLEN */
-            if (!Timer1 || SD_SendCmd(CMD16, 512) != 0) type = 0;
+            if (!Timer1 || execute_sd_command_transaction(CMD16, 512, NULL, 0) != 0) type = 0;
         }
     }
 
