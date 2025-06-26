@@ -29,6 +29,7 @@
 #include "log_uart.h"
 #include "cache.h"
 #include "megadrive.h"
+#include <string.h>    // Pour strlen()
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,6 +62,7 @@ FILINFO fno;
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 void boot(void);
+void test_file_write(const char *filename, const char *text_to_write);
 void list_sd_root(void);
 void test_file_transfer(const char *filename);
 void test_file_access(const char *filename);
@@ -119,8 +121,15 @@ int main(void)
       while(1); // Stoppe tout
   }
 
-  boot();
-//  mainMegadriveLoop();
+//  boot();
+
+  const char my_text[] = "Ceci est un test d'ecriture sur la carte SD. Repetons pour faire du volume. ";
+  char long_text_buffer[1024 * 4]; // Buffer pour un texte plus long, par exemple 4Ko
+  long_text_buffer[0] = '\0';
+  for (int i = 0; i < (sizeof(long_text_buffer) - strlen(my_text) - 1) / strlen(my_text); i++) {
+      strcat(long_text_buffer, my_text); // Crée un texte plus long
+  }
+  test_file_write("test_4ko.txt", long_text_buffer);
 
 //  list_sd_root();
 //  test_file_transfer("test.txt");
@@ -229,6 +238,72 @@ void boot(void) {
 
     // 2. Lance la boucle principale de gestion du bus Mega Drive
     mainMegadriveLoop();
+}
+
+/**
+ * @brief Teste l'écriture d'un texte dans un fichier sur la carte SD et mesure le temps.
+ * @param filename Nom du fichier à créer/écraser (ex: "TESTWR.TXT").
+ * @param text_to_write Chaîne de caractères à écrire dans le fichier.
+ */
+void test_file_write(const char *filename, const char *text_to_write) {
+    FIL file_obj;      // Objet fichier FatFs
+    FRESULT fr;        // Code de résultat FatFs
+    UINT bytes_written; // Pour stocker le nombre d'octets écrits
+    uint32_t t_start, t_end, duration_ms;
+    size_t text_len = strlen(text_to_write);
+
+    if (text_len == 0) {
+        logUart("Test ecriture: Texte a ecrire est vide pour %s.", filename);
+        return;
+    }
+
+    logUart("Test d'ecriture dans %s: %u octets...", filename, (unsigned int)text_len);
+
+    // --- Démarrage du chronomètre ---
+    t_start = HAL_GetTick();
+
+    // 1. Ouvre/Crée le fichier en mode écriture.
+    // FA_CREATE_ALWAYS: Crée un nouveau fichier. S'il existe, il est écrasé.
+    fr = f_open(&file_obj, filename, FA_WRITE | FA_CREATE_ALWAYS);
+    if (fr != FR_OK) {
+        logUart("Erreur f_open pour ecriture (%s): %d", filename, fr);
+        return;
+    }
+
+    // 2. Écrit le texte dans le fichier
+    // Pour un seul gros buffer, un seul f_write est bien.
+    // Si tu écrivais par petits bouts, tu ferais plusieurs f_write.
+    fr = f_write(&file_obj, text_to_write, text_len, &bytes_written);
+    if (fr != FR_OK) {
+        logUart("Erreur f_write dans %s: %d", filename, fr);
+        f_close(&file_obj); // Essaye de fermer même si erreur d'écriture
+        return;
+    }
+
+    if (bytes_written < text_len) {
+        logUart("Attention: Moins d'octets ecrits (%u) que prevu (%u) dans %s", (unsigned int)bytes_written, (unsigned int)text_len, filename);
+        // Pas nécessairement une erreur FatFs, mais bon à savoir.
+    }
+
+    // 3. Ferme le fichier (TRÈS IMPORTANT pour l'écriture !)
+    // f_close() s'assure que toutes les données en buffer sont effectivement écrites
+    // sur le support physique et que la structure du système de fichiers (FAT, dir entries) est mise à jour.
+    fr = f_close(&file_obj);
+    if (fr != FR_OK) {
+        logUart("Erreur f_close apres ecriture (%s): %d", filename, fr);
+        // Les données pourraient ne pas être correctement sauvegardées.
+        // Pas de 'return' ici pour quand même afficher la durée.
+    }
+
+    // --- Arrêt du chronomètre ---
+    t_end = HAL_GetTick();
+    duration_ms = t_end - t_start;
+
+    if (fr == FR_OK) { // Si f_close (la dernière opération critique) a réussi
+        logUart("Ecriture de %u octets dans %s REUSSIE en %lu ms.", (unsigned int)bytes_written, filename, duration_ms);
+    } else {
+        logUart("Ecriture dans %s terminee avec ERREUR (f_close a echoue), duree: %lu ms.", filename, duration_ms);
+    }
 }
 
 void test_file_transfer(const char *filename) {
