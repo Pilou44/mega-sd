@@ -238,6 +238,14 @@ void DMA2_Stream3_IRQHandler(void)
 
 /* USER CODE BEGIN 1 */
 
+// Callback pour fin de transmission DMA SPI
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
+  if (hspi->Instance == SPI1) {
+    spiDmaTransferStatus = HAL_OK;
+    spiDmaTransferComplete = true;
+  }
+}
+
 // Callback appelé lorsque le transfert SPI DMA (TX et RX) est terminé
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 {

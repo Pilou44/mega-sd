@@ -2,6 +2,10 @@
 #define FALSE 0
 #define bool BYTE
 
+#define DEFAULT_SD_READY_TIMEOUT 500
+#define DEFAULT_SD_BUSY_TIMEOUT_AFTER_WRITE 250 // Timeout de 250 ms
+#define DEFAULT_SD_BUSY_TIMEOUT_AFTER_WRITE_MULTI 500
+
 #include "stm32f4xx_hal.h"
 
 #include "diskio.h"
@@ -45,13 +49,6 @@ static void SPI_TxByte(uint8_t data)
     HAL_SPI_Transmit(HSPI_SDCARD, &data, 1, SPI_TIMEOUT);
 }
 
-/* SPI transmit buffer */
-static void SPI_TxBuffer(uint8_t *buffer, uint16_t len)
-{
-    while(!__HAL_SPI_GET_FLAG(HSPI_SDCARD, SPI_FLAG_TXE));
-    HAL_SPI_Transmit(HSPI_SDCARD, buffer, len, SPI_TIMEOUT);
-}
-
 /* SPI receive a byte */
 static uint8_t SPI_RxByte(void)
 {
@@ -64,12 +61,6 @@ static uint8_t SPI_RxByte(void)
     return data;
 }
 
-/* SPI receive a byte via pointer */
-static void SPI_RxBytePtr(uint8_t *buff) 
-{
-    *buff = SPI_RxByte();
-}
-
 /***************************************
  * SD functions
  **************************************/
@@ -78,17 +69,6 @@ static void SPI_RxBytePtr(uint8_t *buff)
 static uint8_t SD_ReadyWait(void)
 {
     return SD_ReadyWait_Timeout(500);
-//    uint8_t res;
-//
-//    /* timeout 500ms */
-//    Timer2 = 500;
-//
-//    /* if SD goes ready, receives 0xFF */
-//    do {
-//        res = SPI_RxByte();
-//    } while ((res != 0xFF) && Timer2);
-//
-//    return res;
 }
 
 /* power on */
@@ -194,66 +174,96 @@ static bool SD_RxDataBlock(BYTE *buff, UINT len)
 #if _USE_WRITE == 1
 static bool SD_TxDataBlock(const uint8_t *buff, BYTE token)
 {
-    uint8_t resp;
-
     /* wait SD ready */
-    if (SD_ReadyWait() != 0xFF) return FALSE;
+    if (SD_ReadyWait_Timeout(DEFAULT_SD_READY_TIMEOUT) != 0xFF) { // DEFAULT_SD_READY_TIMEOUT à définir
+        logUart("SD_TxDataBlock: SD_ReadyWait_Timeout FAILED avant token");
+        return FALSE;
+    }
 
     /* transmit token */
     SPI_TxByte(token);
 
     /* if it's not STOP token, transmit data */
-    if (token != 0xFD)
-    {
-        SPI_TxBuffer((uint8_t*)buff, 512);
+    if (token == 0xFE || token == 0xFC) { // Si c'est un token de début de bloc de données
+        HAL_StatusTypeDef dma_launch_status;
 
-        /* discard CRC */
-//        SPI_RxByte();
-//        SPI_RxByte();
+        spiDmaTransferComplete = false;     // Réinitialise le flag
+        spiDmaTransferStatus = HAL_BUSY; // État initial
+
+        // Lancement du transfert DMA pour les 512 octets de données
+        // buff est const, mais HAL_SPI_Transmit_DMA attend uint8_t* non-const.
+        // Un cast est nécessaire si buff est vraiment const.
+        dma_launch_status = HAL_SPI_Transmit_DMA(HSPI_SDCARD, (uint8_t*)buff, 512);
+
+        if (dma_launch_status != HAL_OK) {
+            logUart("SD_TxDataBlock: HAL_SPI_Transmit_DMA launch FAILED! Status: %d", dma_launch_status);
+            // Tenter d'arrêter le DMA si le lancement a échoué mais que le handle est actif
+            // HAL_SPI_DMAStop(HSPI_SDCARD); // Peut ne pas être nécessaire si le lancement échoue proprement
+            return FALSE;
+        }
+//        logUart("SD_TxDataBlock: DMA TX de 512 octets demarre...");
+
+        // Attente de la fin du transfert DMA (avec timeout Timer1)
+        Timer1 = 100; // Timeout de 100ms pour le transfert DMA
+        while(!spiDmaTransferComplete && Timer1) {
+            // Attente active ou permettre à d'autres tâches de s'exécuter si RTOS
+        }
+
+        if (!spiDmaTransferComplete) { // Timeout DMA
+            logUart("SD_TxDataBlock: DMA TX TIMEOUT! (Timer1 a expire)");
+            HAL_SPI_DMAStop(HSPI_SDCARD); // Important d'arrêter le DMA en cas de timeout
+            return FALSE;
+        }
+
+        if (spiDmaTransferStatus != HAL_OK) { // Erreur DMA reportée par callback SPI
+            logUart("SD_TxDataBlock: DMA TX FAILED! Status: %d, SPI Error: 0x%lX", spiDmaTransferStatus, HSPI_SDCARD.ErrorCode);
+            // Le DMA a pu être stoppé dans le ErrorCallback, ou le stopper ici aussi
+            // HAL_SPI_DMAStop(HSPI_SDCARD);
+            return FALSE;
+        }
+//        logUart("SD_TxDataBlock: DMA TX de 512 octets OK!");
+
+        // Après le DMA des 512 octets de données, envoyer les 2 octets de CRC (en mode polling)
         SPI_TxByte(0xFF); // CRC Fictif octet 1
         SPI_TxByte(0xFF); // CRC Fictif octet 2
 
-        /* receive response */
-        Timer1 = 200; // Exemple: Timeout de 200ms pour la réponse
+        // Maintenant, attendre et recevoir le "Data Response Token" de la carte
+        Timer1 = 200; // Timeout de 200ms pour la réponse (N_WR)
+        uint8_t data_resp_token;
         do {
-            resp = SPI_RxByte();
-        } while (resp == 0xFF && Timer1); // La carte envoie 0xFF avant sa réponse.
+            data_resp_token = SPI_RxByte(); // SPI_RxByte reste en polling
+        } while (data_resp_token == 0xFF && Timer1); // La carte envoie 0xFF avant sa réponse
 
-        // Vérifie si le token de réponse est "Données Acceptées"
-        if (!Timer1 || (resp & 0x1F) != 0x05) {
-            logUart("SD_TxDataBlock: Erreur Data Response Token ou Timeout. Reponse: 0x%02X", resp);
-            // Même si erreur, la carte peut passer busy. Il faut attendre.
-            SD_ReadyWait_Timeout(500); // Attendre que la carte finisse son cycle (long timeout)
-            return FALSE; // Échec
+        if (!Timer1 || (data_resp_token & 0x1F) != 0x05) { // 0bXXX00101 = Data Accepted
+            logUart("SD_TxDataBlock: Erreur Data Response Token ou Timeout. Token: 0x%02X, T1: %lu", data_resp_token, Timer1);
+            SD_ReadyWait_Timeout(DEFAULT_SD_BUSY_TIMEOUT_AFTER_WRITE); // Tenter de laisser la carte finir
+            return FALSE;
         }
+//        logUart("SD_TxDataBlock: Data Response Token OK (0x%02X)", data_resp_token);
 
-        /* 5. Attendre que la carte ne soit plus "busy" (fin de l'écriture physique en flash) */
-                // Après avoir accepté les données, la carte met MISO à BAS (0x00) pendant qu'elle écrit.
-                // Il faut attendre que MISO revienne à HAUT (0xFF). Cela peut être TRES LONG (200-500ms ou plus).
-                // Ta boucle "while (SPI_RxByte() == 0);" est dangereuse :
-                //    - Pas de timeout : risque de boucle infinie si la carte reste busy.
-                //    - Elle s'arrête dès que SPI_RxByte() != 0. Elle devrait attendre SPI_RxByte() == 0xFF.
-                if (SD_ReadyWait_Timeout(500) != 0xFF) { // Utilise une fonction avec timeout (ex: 500ms)
-                     logUart("SD_TxDataBlock: Timeout attente fin de BUSY apres ecriture bloc.");
-                     return FALSE;
-                }
-                return TRUE; // Succès de l'écriture du bloc de données
-    }
-    else if (token == 0xFD) // C'est un token STOP_TRAN (après un CMD25)
-    {
+        // Données acceptées, attendre que la carte ne soit plus "busy" (écriture physique)
+        if (SD_ReadyWait_Timeout(DEFAULT_SD_BUSY_TIMEOUT_AFTER_WRITE) != 0xFF) { // Mettre un timeout long (ex: 500ms)
+            logUart("SD_TxDataBlock: Timeout attente fin de BUSY apres ecriture bloc.");
+            return FALSE;
+        }
+//        logUart("SD_TxDataBlock: Carte plus busy apres ecriture bloc.");
+        return TRUE;
+
+    } else if (token == 0xFD) { // C'est un token STOP_TRAN (après un CMD25)
         // Après avoir envoyé 0xFD, la carte SD a besoin que le maître lise au moins un octet "stuff byte".
-        // Elle peut envoyer n'importe quoi (généralement 0x00 ou 0xFF) avant de passer busy.
         SPI_RxByte(); // Lire et ignorer cet octet.
 
         // Ensuite, la carte passe "busy" pour écrire tous les blocs précédents. Attendre la fin.
-        if (SD_ReadyWait_Timeout(500) != 0xFF) { // Long timeout, car l'écriture de plusieurs blocs peut prendre du temps.
+        if (SD_ReadyWait_Timeout(DEFAULT_SD_BUSY_TIMEOUT_AFTER_WRITE_MULTI) != 0xFF) { // Timeout très long ici
             logUart("SD_TxDataBlock: Timeout attente fin de BUSY apres STOP_TRAN (0xFD).");
             return FALSE;
         }
-        return TRUE; // Succès de l'opération Stop Tran
+//        logUart("SD_TxDataBlock: Carte plus busy apres STOP_TRAN.");
+        return TRUE;
     }
 
-    return FALSE; // Ne devrait pas arriver si token est valide (0xFE, 0xFC, 0xFD)
+    logUart("SD_TxDataBlock: Token inconnu ou logique non implementee: 0x%02X", token);
+    return FALSE;
 }
 #endif /* _USE_WRITE */
 
