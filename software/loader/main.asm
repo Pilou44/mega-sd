@@ -553,10 +553,16 @@ CPU_EntryPoint:
     move.w #tile_id_i, vdp_data     ; I
     move.w #tile_id_n, vdp_data     ; N
     move.w #tile_id_g, vdp_data     ; G
-    move.w #tile_id_dot, vdp_data   ; .
-    move.w #tile_id_dot, vdp_data   ; .
-    move.w #tile_id_dot, vdp_data   ; .
+    ;move.w #tile_id_dot, vdp_data   ; .
+    ;move.w #tile_id_dot, vdp_data   ; .
+    ;move.w #tile_id_dot, vdp_data   ; .
     ;move.w #tile_id_d, vdp_data     ; D
+
+    ; >>> MODIFICATION START
+    ; Store the VRAM address for the first dot in address register a1
+    ; "LOADING" has 7 characters. The dot starts at the 8th position.
+    movea.l #vram_addr_plane_a+(((text_pos_y*vdp_plane_width)+text_pos_x+7)*size_word), a1
+    ; >>> MODIFICATION END
 
     ; Finished!
     
@@ -568,6 +574,31 @@ CPU_EntryPoint:
     ; of its own accord, so it will continue to render our Hello World
     ; even though the CPU is stuck in this loop.
     @InfiniteLp:
+        ; >>> MODIFICATION START
+        ; State 1: Show "LOADING."
+        movea.l a1, a0               ; Use the stored address for the dots
+        jsr    SetVRAMWriteAddr     ; Set the VDP to write at this position
+        move.w #tile_id_dot, vdp_data
+        move.w #tile_id_space, vdp_data
+        move.w #tile_id_space, vdp_data
+        jsr    Wait                 ; Pause
+
+        ; State 2: Show "LOADING.."
+        movea.l a1, a0
+        jsr    SetVRAMWriteAddr
+        move.w #tile_id_dot, vdp_data
+        move.w #tile_id_dot, vdp_data
+        move.w #tile_id_space, vdp_data
+        jsr    Wait
+
+        ; State 3: Show "LOADING..."
+        movea.l a1, a0
+        jsr    SetVRAMWriteAddr
+        move.w #tile_id_dot, vdp_data
+        move.w #tile_id_dot, vdp_data
+        move.w #tile_id_dot, vdp_data
+        jsr    Wait
+        ; >>> MODIFICATION END
     bra @InfiniteLp
     
 ;==============================================================
@@ -654,6 +685,43 @@ VDP_LoadRegisters:
     dbra   d0, @CopyRegLp       ; Decrement d0, and jump back to top of loop if d0 is still >= 0
     
     rts
+
+; >>> MODIFICATION START
+;==============================================================
+; Simple delay routine
+;==============================================================
+Wait:
+    ; You can change this value to make the animation faster or slower
+    ; Bigger value = slower animation
+    move.l #200000, d7
+@WaitLp:
+    subq.l #1, d7
+    bne    @WaitLp
+    rts
+
+;==============================================================
+; SetVRAMWriteAddr - Sets the VDP write address from register a0
+;==============================================================
+; This is a runtime version of the SetVRAMWrite macro
+SetVRAMWriteAddr:
+    move.l a0, d0         ; Copy address to d0 for calculations
+    move.l d0, d1         ; Make another copy
+
+    ;lsr.l  #14, d0        ; d0 = address >> 14
+    move.b #14, d2  ; Load shift count into a temporary register (e.g., d2)
+    lsr.l  d2, d0   ; Shift d0 by the value in d2
+
+    andi.l #$3FFF, d1     ; d1 = address & 0x3FFF
+    ;lsl.l  #16, d1        ; d1 = (address & 0x3FFF) << 16
+    move.b #16, d2  ; Load shift count
+    lsl.l  d2, d1   ; Shift d1 by the value in d2
+
+    or.l   d1, d0         ; Combine the two parts
+    ori.l   #vdp_cmd_vram_write, d0 ; Add the VRAM write command
+
+    move.l d0, vdp_control ; Send the final command to the VDP
+    rts
+; >>> MODIFICATION END
 
 ; A label defining the end of ROM so we can compute the total size.
 ROM_End:
