@@ -17,8 +17,8 @@ static CachePageEntry_t cache[CACHE_PAGE_COUNT];
 static uint32_t currentTimestamp = 0;
 
 // Variables globales de ton fichier fatfs_sd.c qui sont maintenant gérées par le cache
-FIL rom_file;
-uint32_t rom_size = 0;
+static FIL rom_file;
+static uint32_t rom_size = 0;
 
 // (Tu devras probablement déplacer la logique de f_open, f_lseek, f_read de tes
 // anciennes fonctions loadRom/getRomWord vers des fonctions helper ici, ou les appeler)
