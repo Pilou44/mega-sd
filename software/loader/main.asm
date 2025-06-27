@@ -225,8 +225,8 @@ size_tile_w             equ size_tile_b/size_word
 size_tile_l             equ size_tile_b/size_long
 
 ; Hello World draw position (in tiles)
-text_pos_x              equ 0x08
-text_pos_y              equ 0x04
+text_pos_x              equ 0x0f
+text_pos_y              equ 0x09
 
 ;==============================================================
 ; VRAM WRITE MACROS
@@ -336,13 +336,13 @@ CharacterL:
     dc.l 0x00000000
     
 CharacterO:
-    dc.l 0x22222220
+    dc.l 0x02222200
     dc.l 0x22000220
     dc.l 0x22000220
     dc.l 0x22000220
     dc.l 0x22000220
     dc.l 0x22000220
-    dc.l 0x22222220
+    dc.l 0x02222200
     dc.l 0x00000000
     
 CharacterW:
@@ -376,13 +376,13 @@ CharacterD:
     dc.l 0x00000000
 
 CharacterA:
-    dc.l 0x00222200
-    dc.l 0x02200220
-    dc.l 0x22000022
-    dc.l 0x22222222
-    dc.l 0x22000022
-    dc.l 0x22000022
-    dc.l 0x22000022
+    dc.l 0x00222000
+    dc.l 0x02202200
+    dc.l 0x22000220
+    dc.l 0x22000220
+    dc.l 0x22222220
+    dc.l 0x22000220
+    dc.l 0x22000220
     dc.l 0x00000000
 
 CharacterI:
@@ -396,23 +396,23 @@ CharacterI:
     dc.l 0x00000000
 
 CharacterN:
-    dc.l 0x22000022
-    dc.l 0x22200022
-    dc.l 0x22020022
-    dc.l 0x22002022
-    dc.l 0x22000222
-    dc.l 0x22000022
-    dc.l 0x22000022
+    dc.l 0x22000220
+    dc.l 0x22200220
+    dc.l 0x22020220
+    dc.l 0x22002220
+    dc.l 0x22000220
+    dc.l 0x22000220
+    dc.l 0x22000220
     dc.l 0x00000000
 
 CharacterG:
-    dc.l 0x02222220
+    dc.l 0x02222200
     dc.l 0x22000000
     dc.l 0x22000000
-    dc.l 0x22002222
-    dc.l 0x22000022
-    dc.l 0x22000022
-    dc.l 0x02222220
+    dc.l 0x22002220
+    dc.l 0x22000220
+    dc.l 0x22000220
+    dc.l 0x02222200
     dc.l 0x00000000
 
 CharacterPeriod:
